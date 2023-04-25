@@ -1,34 +1,16 @@
-import {gql, useQuery} from '@apollo/client';
-import {QueryHookOptions} from '@apollo/react-hooks';
-import shiftTemplateFields from './fields';
-import {GetShiftTemplateByFacilityIdData, GetShiftTemplateByFacilityIdVariables} from './types';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import {getShiftTemplates, setShiftTemplates} from '../../slices/shiftTemplateSlice';
+import { DocumentNode, gql} from '@apollo/client';
+import allFacilityFields from '../facility/fields';
+import allMeFields from './fields';
 
-const getShiftTemplateByFacilityId = (fields: string = shiftTemplateFields) => gql`
-  query ($facilityId: String!) {
-    getShiftTemplateByFacilityId(facilityId: $facilityId){
-      ${fields}
+const getMeFacility = (facilityFields: string = allFacilityFields, meFields: string = allMeFields): DocumentNode => gql`
+  query Me {
+    Me {
+      ... on MeFacility {
+        ${facilityFields}
+      }
     }
+    ${meFields}
   }
 `;
 
-const useGetShiftTemplateByFacilityId = (
-  options?: QueryHookOptions<GetShiftTemplateByFacilityIdData, GetShiftTemplateByFacilityIdVariables>,
-  fields?: string
-) => {
-  const dispatch = useAppDispatch();
-
-  dispatch(getShiftTemplates());
-
-  return useQuery<GetShiftTemplateByFacilityIdData, GetShiftTemplateByFacilityIdVariables>(
-    getShiftTemplateByFacilityId(fields),
-    {
-      ...options,
-      onCompleted: data => {
-        dispatch(setShiftTemplates(data));
-      },
-    }
-  );
-};
-export default useGetShiftTemplateByFacilityId;
+export default getMeFacility;

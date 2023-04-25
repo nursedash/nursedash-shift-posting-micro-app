@@ -1,54 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Counter from './components/Counter/Counter';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { counterActions } from './redux/counter/slice';
+import './App.scss';
+import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import AppContainer from './shared/components/Navigation/AppContainer';
+import useAppDispatch from './shared/hooks/useAppDispatch';
+import { useParams } from 'react-router-dom';
+import { coreActions } from './shared/redux/core/slice';
+import { facilityActions } from './shared/redux/facility/slice';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-function App(): JSX.Element {
+const mdTheme = createTheme();
+
+const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
+  const { token, facility} = useParams();
+  const facilityId = parseInt(facility ?? '0');
 
-  const { value } = useAppSelector((state) => state.counter);
-
-  const increment = (): void => {
-    dispatch(counterActions.increment());
-  };
-
-  const decrement = (): void => {
-    dispatch(counterActions.decrement());
-  };
-
-  const incrementAsync = (): void => {
-    dispatch(counterActions.incrementAsync());
-  };
-
-  const decrementAsync = (): void => {
-    dispatch(counterActions.decrementAsync());
-  };
+  dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityId ?? null}));
+  dispatch(facilityActions.fetchFacilityDataAsync());
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter
-          onIncrement={increment}
-          onDecrement={decrement}
-          onIncrementAsync={incrementAsync}
-          onDecrementAsync={decrementAsync}
-          value={value}
-        />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+        <ThemeProvider theme={mdTheme}>
+            <Box sx={{ display: 'flex' }}>
+              <CssBaseline />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <AppContainer />
+              </LocalizationProvider>
+            </Box>
+        </ThemeProvider>
     </div>
   );
 }

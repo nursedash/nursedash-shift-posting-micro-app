@@ -1,8 +1,10 @@
-// src/pages/HomePage.tsx
 import React from 'react';
+// import ShiftsCard from './ShiftsCard';
+import { Outlet } from 'react-router-dom';
+
 
 const Shifts: React.FC = () => {
-  return <div>Home Page</div>;
+  return <Outlet />;
 };
 
 export default Shifts;

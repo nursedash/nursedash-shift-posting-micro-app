@@ -1,29 +1,39 @@
-import { takeEvery, Effect, ForkEffect, select, call } from 'redux-saga/effects';
-import { userActions } from './slice';
-import { selectCoreUserId } from '../core/slice';
-import useGetMeUser from '../../gql/me/queries';
+import { Effect, ForkEffect, select, call, takeLatest, put } from 'redux-saga/effects';
+import { facilityActions } from './slice';
+import { selectCoreFacilityId } from '../core/slice';
+import { client } from '../../../core/providers/ApolloProvider';
+import getMeFacility from '../../gql/me/queries';
+import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
+import { ApolloQueryResult } from '@apollo/client';
 
-export function* watchStoreUserDataAsync(): Generator<Effect, void> {
+export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
   try {
-    console.log('we out here trying');
-    const userId = (yield select(selectCoreUserId)) as number;
+    const facilityId = (yield select(selectCoreFacilityId)) as number;
+    const variables: GetMeVariables = { id: facilityId };
+
     // @ts-expect-error
-    const [getMeUserFn] = useGetMeUser({variables: {id: userId}});
-    call(getMeUserFn);
-    // = yield select((state: RootState) => state.core.userId);
-    // yield put(userActions.storeUserData(payload));
+    const response: ApolloQueryResult<GetMeFacilityData> = yield call(client.query, {
+      query: getMeFacility(),
+      variables
+    });
+
+    yield put(facilityActions.storeFacilityData({
+      ...response.data.Me,
+      allShiftUnits: response.data.allShiftUnits ,
+      allQualificationTypes: response.data.allQualificationTypes
+    }));
   } catch (error) {
     console.log(error);
   }
 }
 
-export function* watchUserSagas(): Generator<ForkEffect, void> {
-  yield takeEvery(
-    userActions.fetchUserDataAsync,
-    watchStoreUserDataAsync
+export function* watchFacilitySagas(): Generator<ForkEffect, void> {
+  yield takeLatest(
+    facilityActions.fetchFacilityDataAsync,
+    watchStoreFacilityDataAsync
   );
 }
 
-const coreSagas = watchUserSagas;
+const facilitySagas = watchFacilitySagas;
 
-export default coreSagas;
+export default facilitySagas;

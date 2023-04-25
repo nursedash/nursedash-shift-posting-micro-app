@@ -1,50 +1,16 @@
-type GetMeUser = {
-  getMeUser: {
-    id: string;
-    name: string;
-  };
-};
+import { FacilityData } from '../../redux/facility/slice';
 
-type GetShiftTemplateByFacilityIdVariables = {
-  facilityId: string;
-};
+interface GetMeFacilityData {
+  Me: FacilityData,
+  allShiftUnits: Array<{ id: number; name: string }>;
+  allQualificationTypes: Array<{ id: number; name: string }>;
+}
 
-type Content = {
-  unit: Unit;
-  positions: Position[];
-  bonusAmount: number;
-  qualifications: Qualification[];
-  startTime: string;
-  endTime: string;
-  opennings: Openings[];
-  description: string;
-  clockInInstruction: string;
-  clockOutInstruction: string;
-};
+interface GetMeVariables {
+  id: number;
+}
 
-type ShiftTemplateModel = {
-  facilityId: string;
-  name: string;
-  content: Content;
-  unitId: string;
-  positionIds: string[];
-};
-
-type CreateShiftTemplateVariables = {shiftTemplateInput: ShiftTemplateModel};
-
-type CreateShiftTemplateData = ShiftTemplateModel & {
-  id: string;
-  createdAt: string;
-  createdBy: string;
-  updatedAt: string;
-  updatedBy: string;
-  deletedAt: string;
-  deletedBy: string;
-};
-
-export {
-  GetShiftTemplateByFacilityIdData,
-  GetShiftTemplateByFacilityIdVariables,
-  CreateShiftTemplateVariables,
-  CreateShiftTemplateData,
+export type {
+  GetMeVariables,
+  GetMeFacilityData
 };
