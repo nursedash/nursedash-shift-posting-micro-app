@@ -71,6 +71,7 @@ export const facilitySlice = createSlice({
 export const selectFacilityName = (state: RootState): string => state.facility.name ?? '';
 export const selectFacilityUnitsAndTypes = (state: RootState): FacilityUnitAndTypes[] => transformRates(state.facility.rates ?? [], state.facility.allShiftUnits ?? []) ?? [];
 export const selectFacilityQualifications = (state: RootState): string[] => state.facility.allowedQualifications ?? [];
+export const selectFacilityTimezone = (state: RootState): string => state.facility.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const {
     actions: facilityActions,

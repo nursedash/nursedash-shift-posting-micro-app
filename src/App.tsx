@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import AppContainer from './shared/components/Navigation/AppContainer';
 import useAppDispatch from './shared/hooks/useAppDispatch';
 import { useParams } from 'react-router-dom';
@@ -8,8 +8,8 @@ import { coreActions } from './shared/redux/core/slice';
 import { facilityActions } from './shared/redux/facility/slice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-
-const mdTheme = createTheme();
+import 'dayjs/locale/en';
+import theme from './theme';
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -21,10 +21,10 @@ const App = (): JSX.Element => {
 
   return (
     <div className="app">
-        <ThemeProvider theme={mdTheme}>
+        <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex' }}>
               <CssBaseline />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
                 <AppContainer />
               </LocalizationProvider>
             </Box>
