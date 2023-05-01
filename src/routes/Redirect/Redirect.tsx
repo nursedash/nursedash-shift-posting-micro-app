@@ -8,7 +8,7 @@ const Redirect = (): ReactJSXElement => {
 
   useEffect(() => {
     if (redirect === 'create') {
-      navigate('/shifts');
+      navigate('/shifts/create');
     }
   }, [redirect, navigate]);
 

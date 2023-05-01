@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, IconButtonProps, Stack } from '@mui/material';
-import { DeleteForever, FileCopy } from '@mui/icons-material';
+import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 import useAppDispatch from '../../../../shared/hooks/useAppDispatch';
 import { shiftActions } from '../../../../shared/redux/shift/slice';
 
@@ -51,6 +51,14 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
           onClick={() => setShiftIdToCopy(shiftId)}
         >
           <FileCopy fontSize='large' />
+        </IconButton>
+        <IconButton
+          {...iconButtonStyles}
+          color='primary'
+          aria-label="delete"
+          size='large'
+        >
+          <Edit fontSize='large' />
         </IconButton>
         <IconButton
           {...iconButtonStyles}

@@ -18,8 +18,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'create',
-            element: <CreateShift />,
-            index: true
+            element: <CreateShift />
           }
         ]
       },
