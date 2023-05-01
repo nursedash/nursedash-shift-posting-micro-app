@@ -215,7 +215,9 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
               ))}
             />
             <Typography color='grey' fontSize={12}>
-              {`By posting this shift, you are agreeing to NurseDash's terms of service and `}
+              {`By posting this shift, you are agreeing to NurseDash's `}
+              <Link href={'https://nursedash.com/terms-conditions/'}>terms of service</Link>
+              {` and `}
               <Link href={'https://nursedash.com/privacy-policy/'}>privacy policy</Link>
             </Typography>
           </Box>

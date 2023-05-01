@@ -17,7 +17,7 @@ interface NavItem {
   local?: boolean;
 }
 
-const nursedashUrl = 'https://facility.nursedash.com/#/';
+const nursedashUrl = 'https://facility-staging.nursedash.com/#/';
 
 const navItems: NavItem[] = [
   {

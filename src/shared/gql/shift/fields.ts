@@ -21,4 +21,10 @@ const shiftFields = `
   updatedAt
 `;
 
+const cancelShiftFields = `
+  id
+  status
+ `;
+
+export { cancelShiftFields }
 export default shiftFields;

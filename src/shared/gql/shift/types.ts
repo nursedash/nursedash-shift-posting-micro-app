@@ -14,6 +14,19 @@ interface CreateOverviewShiftData {
   createOverviewShift: Shift;
 }
 
+interface CancelOverviewShiftVariables {
+  id: number;
+}
+
+interface CancelOverviewShiftData {
+  id: number;
+  status: string;
+}
+
+interface CancelOverviewShiftResponse {
+  cancelOverviewShift: CancelOverviewShiftData;
+}
+
 interface Shift {
   id: number;
   breakTime: number;
@@ -51,6 +64,9 @@ interface NewShift {
 export type {
   CreateOverviewShiftVariables,
   CreateOverviewShiftData,
+  CancelOverviewShiftResponse,
+  CancelOverviewShiftVariables,
+  CancelOverviewShiftData,
   Shift,
   NewShift
 };
