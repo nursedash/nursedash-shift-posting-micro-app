@@ -10,8 +10,8 @@ const createOverviewShift = (fields: string = shiftFields): DocumentNode => gql`
 `;
 
 const cancelOverviewShift = (fields: string = cancelShiftFields): DocumentNode => gql`
-    mutation cancelOverviewShift($id: Int!) {
-        cancelOverviewShift(id: $id) {
+    mutation cancelShift($id: Int!) {
+        cancelShift(id: $id) {
             ${fields}
         }
     }

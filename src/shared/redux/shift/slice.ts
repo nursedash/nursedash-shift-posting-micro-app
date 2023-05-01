@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { CancelOverviewShiftData, Shift } from '../../gql/shift/types';
+import { CancelOverviewShiftData, CancelOverviewShiftVariables, Shift } from '../../gql/shift/types';
 
 export interface ShiftSlice {
   postedShifts: Shift[];
@@ -31,8 +31,9 @@ export const shiftSlice = createSlice({
       state.postedShifts = [...state.postedShifts, action.payload];
     },
     postShiftDataAsync: (state, action: PayloadAction<NewShiftPayload>) => {},
-    cancelShiftAsync: (state, action: PayloadAction<number>) => {},
+    cancelShiftAsync: (state, action: PayloadAction<CancelOverviewShiftVariables>) => {},
     updateShiftStatusAsync: (state, action: PayloadAction<CancelOverviewShiftData>) => {
+      console.log(action.payload);
       const { id, status } = action.payload;
       const shiftIndex = state.postedShifts.findIndex(shift => shift.id === id);
       if (shiftIndex !== -1) {

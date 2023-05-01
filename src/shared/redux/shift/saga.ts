@@ -39,19 +39,20 @@ export function* watchStoreShiftDataAsync(action: PayloadAction<NewShiftPayload>
   }
 }
 
-export function* watchUpdateShiftCancellationAsync(action: PayloadAction<CancelOverviewShiftVariables>): Generator<Effect, void> {
+export function* watchCancelShiftAsync(action: PayloadAction<CancelOverviewShiftVariables>): Generator<Effect, void> {
   try {
-    const { payload } = action;
+    const id = action.payload.id;
 
     // @ts-expect-error
     const response: ApolloQueryResult<CancelOverviewShiftResponse> = yield call(client.mutate, {
       mutation: cancelOverviewShift(),
       variables: {
-        id: payload,
+        id
       }
     });
 
-    yield put(shiftActions.updateShiftStatusAsync(response.data.cancelOverviewShift));
+    console.log(response);
+    yield put(shiftActions.updateShiftStatusAsync(response.data.cancelShift));
     toast.success(`Shift cancelled successfully`);
   } catch (error) {
     toast.error(`There was an error cancelling the shift. Please try again.`);
@@ -65,8 +66,8 @@ export function* watchShiftSagas(): Generator<ForkEffect, void> {
     watchStoreShiftDataAsync
   );
   yield takeEvery(
-    shiftActions.updateShiftStatusAsync,
-    watchUpdateShiftCancellationAsync
+    shiftActions.cancelShiftAsync,
+    watchCancelShiftAsync
   );
 }
 

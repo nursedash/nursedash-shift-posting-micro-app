@@ -24,7 +24,7 @@ interface CancelOverviewShiftData {
 }
 
 interface CancelOverviewShiftResponse {
-  cancelOverviewShift: CancelOverviewShiftData;
+  cancelShift: CancelOverviewShiftData;
 }
 
 interface Shift {

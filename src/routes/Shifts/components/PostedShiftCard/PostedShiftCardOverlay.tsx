@@ -22,7 +22,15 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
   const dispatch = useAppDispatch();
 
   const setShiftIdToCopy = (id: number): void => {
-      dispatch(shiftActions.setSelectedShiftIdToCopy(id));
+    dispatch(shiftActions.setSelectedShiftIdToCopy(id));
+  }
+
+  const handleCancelShift = (id: number): void => {
+    dispatch(shiftActions.cancelShiftAsync({id}));
+  }
+
+  const handleEditShift = (): void => {
+    console.log('edit');
   }
 
   return (
@@ -55,8 +63,9 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
         <IconButton
           {...iconButtonStyles}
           color='primary'
-          aria-label="delete"
+          aria-label="edit"
           size='large'
+          onClick={handleEditShift}
         >
           <Edit fontSize='large' />
         </IconButton>
@@ -65,6 +74,7 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
           color='error'
           aria-label="delete"
           size='large'
+          onClick={() => handleCancelShift(shiftId)}
         >
           <DeleteForever fontSize='large' />
         </IconButton>
