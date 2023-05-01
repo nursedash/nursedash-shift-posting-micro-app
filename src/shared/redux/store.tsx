@@ -14,7 +14,7 @@ const configureAppStore = (initialState = {}) => {
     reducer: rootReducer,
     middleware: (gDM) => gDM().concat([...middleware]),
     preloadedState: initialState,
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: true,
   });
 
   sagaMiddleware.run(rootSaga);
