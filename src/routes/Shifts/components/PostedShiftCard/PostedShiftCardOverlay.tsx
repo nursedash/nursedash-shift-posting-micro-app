@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, IconButton, IconButtonProps, Stack } from '@mui/material';
+import { Box, IconButton, IconButtonProps, Stack, Typography } from '@mui/material';
 import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 import useAppDispatch from '../../../../shared/hooks/useAppDispatch';
 import { shiftActions } from '../../../../shared/redux/shift/slice';
 
 interface PostedShiftCardOverlayProps {
   shiftId: number;
+  status: string;
 }
 
 const iconButtonStyles: IconButtonProps = {
@@ -18,8 +19,9 @@ const iconButtonStyles: IconButtonProps = {
   }
 }
 
-const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId }) => {
+const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId, status }) => {
   const dispatch = useAppDispatch();
+  const isCancelled = status === 'cancelled';
 
   const setShiftIdToCopy = (id: number): void => {
     dispatch(shiftActions.setSelectedShiftIdToCopy(id));
@@ -51,34 +53,38 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
         zIndex: 1,
       }}
     >
-      <Stack direction="row" spacing={4}>
-        <IconButton
-          {...iconButtonStyles}
-          color="primary"
-          aria-label="copy"
-          onClick={() => setShiftIdToCopy(shiftId)}
-        >
-          <FileCopy fontSize='large' />
-        </IconButton>
-        <IconButton
-          {...iconButtonStyles}
-          color='primary'
-          aria-label="edit"
-          size='large'
-          onClick={handleEditShift}
-        >
-          <Edit fontSize='large' />
-        </IconButton>
-        <IconButton
-          {...iconButtonStyles}
-          color='error'
-          aria-label="delete"
-          size='large'
-          onClick={() => handleCancelShift(shiftId)}
-        >
-          <DeleteForever fontSize='large' />
-        </IconButton>
-      </Stack>
+      {
+        isCancelled ?
+          <Typography variant='h5' color='error' fontWeight='bold'>CANCELLED</Typography>
+            : <Stack direction="row" spacing={4}>
+            <IconButton
+              {...iconButtonStyles}
+              color="primary"
+              aria-label="copy"
+              onClick={() => setShiftIdToCopy(shiftId)}
+            >
+              <FileCopy fontSize='large' />
+            </IconButton>
+            <IconButton
+              {...iconButtonStyles}
+              color='primary'
+              aria-label="edit"
+              size='large'
+              onClick={handleEditShift}
+            >
+              <Edit fontSize='large' />
+            </IconButton>
+            <IconButton
+              {...iconButtonStyles}
+              color='error'
+              aria-label="delete"
+              size='large'
+              onClick={() => handleCancelShift(shiftId)}
+            >
+              <DeleteForever fontSize='large' />
+            </IconButton>
+          </Stack>
+      }
     </Box>
   );
 };

@@ -6,7 +6,7 @@ import {
   CardHeader,
   Typography,
   Box,
-  TypographyProps
+  TypographyProps, Chip
 } from '@mui/material';
 import { formatTimeRangeFromDateTimeStamps, getDateFromDateTimeStamp } from '../../../../shared/utils';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
@@ -34,6 +34,7 @@ const dataElement = (label: string, data: string, key: string): ReactJSXElement 
 }
 
 const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift }) => {
+  const isCancelled = shift.status === 'cancelled'
   const tz = useAppSelector(selectFacilityTimezone)
   const shiftDisplayData = [
     {
@@ -67,13 +68,20 @@ const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift }) => {
       <Card>
         <CardHeader
           title={shift.role}
-          subheader={getDateFromDateTimeStamp(shift.start_time)}
+          subheader={
+          <Box display='flex' alignItems='center'>
+            {
+              isCancelled ? <Chip label={shift.status.toUpperCase()} color={'error'} />
+                : <Typography>{getDateFromDateTimeStamp(shift.start_time)}</Typography>
+            }
+          </Box>
+          }
         />
         <CardContent>
           {shiftDisplayData.map((data) => dataElement(data.label, data.data.toString(), uuid()))}
         </CardContent>
       </Card>
-      <PostedShiftCardOverlay shiftId={shift.id}/>
+      <PostedShiftCardOverlay shiftId={shift.id} status={shift.status} />
     </Box>
   );
 };
