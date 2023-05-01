@@ -52,6 +52,13 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   } = useForm<NewShift>();
   const cleanDateTime = (propName: 'startDateTime' | 'endDateTime'): string =>
     typeof getValues(propName) === 'string' ? getValues(propName) as unknown as string : getValues(propName).toISOString();
+
+
+  const handleFormReset = (): void => {
+    reset();
+    dispatch(shiftActions.resetShiftIdToCopy());
+  }
+
   const onSubmit = handleSubmit((data) => {
     const startDateTime = cleanDateTime('startDateTime');
     const endDateTime = cleanDateTime('endDateTime');
@@ -60,8 +67,9 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       startDateTime,
       endDateTime
     }));
-    reset();
+    handleFormReset()
   });
+
   const unitsAndTypes = useAppSelector(selectFacilityUnitsAndTypes);
   const allowedQualifications = useAppSelector(selectFacilityQualifications);
   const shiftIdToCopy = useAppSelector(selectShiftIdToCopy);
@@ -225,7 +233,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       </CardContent>
       <CardActions>
         <Box p={2} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-          <Button disabled={!isDirty} onClick={() => reset()}>Clear</Button>
+          <Button disabled={!isDirty} onClick={handleFormReset}>Clear</Button>
           <Button type='submit' variant="contained" disabled={!isValid}>Post Shift</Button>
         </Box>
       </CardActions>

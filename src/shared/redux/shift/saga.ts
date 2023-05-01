@@ -32,7 +32,6 @@ export function* watchStoreShiftDataAsync(action: PayloadAction<NewShiftPayload>
 
     yield put(shiftActions.storePostedShift(response.data.createOverviewShift));
     toast.success(`Shift created successfully`);
-    yield put(shiftActions.resetShiftIdToCopy());
   } catch (error) {
     toast.error(`There was an error creating the shift. Please try again.`);
     console.log(error);
@@ -51,7 +50,6 @@ export function* watchCancelShiftAsync(action: PayloadAction<CancelOverviewShift
       }
     });
 
-    console.log(response);
     yield put(shiftActions.updateShiftStatusAsync(response.data.cancelShift));
     toast.success(`Shift cancelled successfully`);
   } catch (error) {

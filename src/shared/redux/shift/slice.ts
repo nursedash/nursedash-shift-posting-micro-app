@@ -33,7 +33,6 @@ export const shiftSlice = createSlice({
     postShiftDataAsync: (state, action: PayloadAction<NewShiftPayload>) => {},
     cancelShiftAsync: (state, action: PayloadAction<CancelOverviewShiftVariables>) => {},
     updateShiftStatusAsync: (state, action: PayloadAction<CancelOverviewShiftData>) => {
-      console.log(action.payload);
       const { id, status } = action.payload;
       const shiftIndex = state.postedShifts.findIndex(shift => shift.id === id);
       if (shiftIndex !== -1) {
