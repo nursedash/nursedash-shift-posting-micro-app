@@ -4,7 +4,7 @@ import allMeFields from './fields';
 
 const getMeFacility = (facilityFields: string = allFacilityFields, meFields: string = allMeFields): DocumentNode => gql`
   query Facility($id: Int!) {
-    Me {
+    Me(id: $id) {
       ... on MeFacility {
         ${facilityFields}
       }
