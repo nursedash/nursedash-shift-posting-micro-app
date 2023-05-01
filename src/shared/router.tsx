@@ -19,6 +19,7 @@ const router = createBrowserRouter([
           {
             path: 'create',
             element: <CreateShift />,
+            index: true
           }
         ]
       },
