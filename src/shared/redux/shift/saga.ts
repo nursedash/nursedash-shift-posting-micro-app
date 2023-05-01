@@ -5,6 +5,7 @@ import createOverviewShift from '../../gql/shift/mutations';
 import { CreateOverviewShiftData, CreateOverviewShiftVariables } from '../../gql/shift/types';
 import { ApolloQueryResult } from '@apollo/client';
 import { PayloadAction } from '@reduxjs/toolkit';
+import { toast } from "react-toastify";
 
 export function* watchStoreShiftDataAsync(action: PayloadAction<NewShiftPayload>): Generator<Effect, void> {
   try {
@@ -25,10 +26,11 @@ export function* watchStoreShiftDataAsync(action: PayloadAction<NewShiftPayload>
       variables
     });
 
-
     yield put(shiftActions.storePostedShift(response.data.createOverviewShift));
+    toast.success(`Shift created successfully`);
     yield put(shiftActions.resetShiftIdToCopy());
   } catch (error) {
+    toast.error(`There was an error creating the shift. Please try again.`);
     console.log(error);
   }
 }

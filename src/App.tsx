@@ -10,6 +10,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import 'dayjs/locale/en';
 import theme from './theme';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -21,14 +24,15 @@ const App = (): JSX.Element => {
 
   return (
     <div className="app">
-        <ThemeProvider theme={theme}>
-            <Box sx={{ display: 'flex' }}>
-              <CssBaseline />
-              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
-                <AppContainer />
-              </LocalizationProvider>
-            </Box>
-        </ThemeProvider>
+      <ToastContainer />
+      <ThemeProvider theme={theme}>
+          <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
+              <AppContainer />
+            </LocalizationProvider>
+          </Box>
+      </ThemeProvider>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { client } from '../../../core/providers/ApolloProvider';
 import getMeFacility from '../../gql/me/queries';
 import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
+import { toast } from "react-toastify";
 
 export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
   try {
@@ -24,6 +25,7 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
     }));
   } catch (error) {
     console.log(error);
+    toast.error(`There was an error fetching the facility data. Please reload the page.`);
   }
 }
 
