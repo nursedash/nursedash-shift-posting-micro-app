@@ -6,8 +6,8 @@ const getMeFacility = (facilityFields: string = allFacilityFields, meFields: str
   query Facility($id: Int!) {
     Me:Facility(id: $id) {
       ${facilityFields}
-      ${meFields}
     }
+    ${meFields}
   }
 `;
 
