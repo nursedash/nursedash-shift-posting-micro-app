@@ -14,7 +14,7 @@ const Redirect = (): ReactJSXElement => {
 
 
   // TODO: Potentially add a spinner here
-  return <div>Hey redirect</div>
+  return <div>Redirecting</div>
 }
 
 export default Redirect;

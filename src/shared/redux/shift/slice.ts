@@ -16,6 +16,7 @@ interface PostedOrEditedShift {
 export interface ShiftSlice {
   postedOrEditedShifts: PostedOrEditedShift[];
   shiftInfoForCopyOrEdit: ShiftInfoForCopyOrEdit
+  allCompletedShifts: Shift[];
 }
 
 const initialState: ShiftSlice = {
@@ -23,7 +24,8 @@ const initialState: ShiftSlice = {
   shiftInfoForCopyOrEdit: {
     id: 0,
     isEdit: false
-  }
+  },
+  allCompletedShifts: []
 };
 
 export const shiftSlice = createSlice({
@@ -52,10 +54,15 @@ export const shiftSlice = createSlice({
     },
     resetShiftInfoToCopyOrEdit: (state) => {
       state.shiftInfoForCopyOrEdit = initialState.shiftInfoForCopyOrEdit;
+    },
+    getCompletedShiftsAsync: (state, action: PayloadAction<any>) => {},
+    storeCompletedShifts: (state, action: PayloadAction<any>) => {
+      state.allCompletedShifts = action.payload;
     }
   },
 });
 
+export const selectAllCompletedShifts = (state: RootState): Shift[] => state.shift.allCompletedShifts ?? [];
 export const selectPostedOrEditedShifts = (state: RootState): PostedOrEditedShift[] => state.shift.postedOrEditedShifts ?? [];
 export const selectShiftInfoForCopyOrEdit = (state: RootState): ShiftInfoForCopyOrEdit => state.shift.shiftInfoForCopyOrEdit;
 export const selectShiftFromPostedOrEditedShifts =

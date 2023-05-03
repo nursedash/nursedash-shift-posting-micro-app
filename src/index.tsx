@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './shared/redux/store';
 import reportWebVitals from './reportWebVitals';
-import router from './shared/router';
+import router from './routes/router';
 import { RouterProvider } from 'react-router-dom';
 import ApolloGqlProvider from './core/providers/ApolloProvider';
 

@@ -8,11 +8,13 @@ import {
   CreateOverviewShiftData,
   CreateOverviewShiftVariables,
   NewShiftPayload,
-  UpdateOverviewShiftResponse
+  UpdateOverviewShiftResponse,
+  GetAllCompletedShiftsResponse, GetAllCompletedShiftsVariables
 } from '../../gql/shift/types';
 import { ApolloQueryResult } from '@apollo/client';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from "react-toastify";
+import { getAllCompletedShifts } from '../../gql/shift/queries';
 
 const mapShiftFormVariables = (payload: NewShiftPayload): CreateOverviewShiftVariables => ({
   breakTime: payload.breakDuration,
@@ -86,6 +88,25 @@ export function* watchUpdateShiftAsync(action: PayloadAction<NewShiftPayload>): 
   }
 }
 
+export function* watchGetCompletedShifts(action: PayloadAction<GetAllCompletedShiftsVariables>): Generator<Effect, void> {
+  try {
+    const { payload } = action;
+    console.log(payload);
+    const variables = {};
+
+    // @ts-expect-error
+    const response: ApolloQueryResult<GetAllCompletedShiftsResponse> = yield call(client.query, {
+      query: getAllCompletedShifts(),
+      variables
+    });
+
+    yield put(shiftActions.storeCompletedShifts(response.data.allCompletedShifts));
+  } catch (error) {
+    toast.error(`There was an error getting the shifts. Please reload and try again.`);
+    console.log(error);
+  }
+}
+
 export function* watchShiftSagas(): Generator<ForkEffect, void> {
   yield takeEvery(
     shiftActions.postShiftAsync,
@@ -98,6 +119,10 @@ export function* watchShiftSagas(): Generator<ForkEffect, void> {
   yield takeEvery(
     shiftActions.updateShiftAsync,
     watchUpdateShiftAsync
+  );
+  yield takeEvery(
+    shiftActions.getCompletedShiftsAsync,
+    watchGetCompletedShifts
   );
 }
 

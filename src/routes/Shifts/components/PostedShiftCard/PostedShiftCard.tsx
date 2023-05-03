@@ -12,7 +12,7 @@ import { formatTimeRangeFromDateTimeStamps, getDateFromDateTimeStamp } from '../
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { useAppSelector } from '../../../../shared/hooks';
 import { selectFacilityTimezone } from '../../../../shared/redux/facility/slice';
-import formatToDollarAmount from '../../../../shared/utils/formatToDollarAmount';
+// import formatToDollarAmount from '../../../../shared/utils/formatToDollarAmount';
 import PostedShiftCardOverlay from './PostedShiftCardOverlay';
 import uuid from 'react-uuid';
 import CustomMUIChip from '../../../../shared/components/CustomMUIChip/CustomMUIChip';
@@ -51,10 +51,10 @@ const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift, sessionStatus 
       label: 'Qualifications',
       data: shift.qualifications
     },
-    {
-      label: 'Rate',
-      data: formatToDollarAmount(shift.rate)
-    }
+    // {
+    //   label: 'Rate',
+    //   data: formatToDollarAmount(shift.rate)
+    // }
   ]
 
   return (

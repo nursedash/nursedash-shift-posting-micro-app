@@ -1,10 +1,11 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
-import ErrorPage from './components/ErrorPage/ErrorPage';
-import Shifts from '../routes/Shifts/Shifts';
-import Redirect from '../routes/Redirect/Redirect';
-import CreateShift from '../routes/Shifts/CreateShift/CreateShift';
+import ErrorPage from '../shared/components/ErrorPage/ErrorPage';
+import Shifts from './Shifts/Shifts';
+import Redirect from './Redirect/Redirect';
+import CreateShift from './Shifts/CreateShift/CreateShift';
+import CompletedShifts from './Shifts/CompletedShifts/CompletedShifts';
 
 const router = createBrowserRouter([
   {
@@ -18,7 +19,11 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'create',
-            element: <CreateShift />
+            element: <CreateShift />,
+          },
+          {
+            path: 'completed',
+            element: <CompletedShifts />
           }
         ]
       },
