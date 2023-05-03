@@ -17,13 +17,12 @@ const cancelOverviewShift = (fields: string = cancelShiftFields): DocumentNode =
     }
 `;
 
-//
-// const updateOverviewShift = (fields: string = shiftFields): DocumentNode => gql`
-//     mutation updateOverviewShift($id: Int, $breakTime: Int, $description: String, $end_time: DateTime, $start_time: DateTime, $type: String, $unit: Int, $qualifications: [String]!) {
-//         updateOverviewShift(id: $id, breakTime: $breakTime, description: $description, end_time: $end_time, start_time: $start_time, type: $type, unit: $unit, qualifications: $qualifications) {
-//             ${fields}
-//         }
-//     }
-// `;
+const updateOverviewShift = (fields: string = shiftFields): DocumentNode => gql`
+    mutation updateOverviewShift($id: Int, $breakTime: Int, $description: String, $end_time: DateTime, $start_time: DateTime, $type: String, $unit: Int, $qualifications: [String]!) {
+        updateOverviewShift(id: $id, breakTime: $breakTime, description: $description, end_time: $end_time, start_time: $start_time, type: $type, unit: $unit, qualifications: $qualifications) {
+            ${fields}
+        }
+    }
+`;
 
-export { createOverviewShift, cancelOverviewShift };
+export { createOverviewShift, cancelOverviewShift, updateOverviewShift};

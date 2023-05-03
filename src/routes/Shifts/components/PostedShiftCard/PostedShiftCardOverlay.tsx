@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, IconButton, IconButtonProps, Stack, Typography } from '@mui/material';
+import { Box, IconButtonProps, Stack, Typography } from '@mui/material';
 import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 import useAppDispatch from '../../../../shared/hooks/useAppDispatch';
 import { shiftActions } from '../../../../shared/redux/shift/slice';
+import IconButtonWithTooltip from '../../../../shared/components/IconButtonWithTooltip/IconButtonWithTooltip';
 
 interface PostedShiftCardOverlayProps {
   shiftId: number;
@@ -24,15 +25,21 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
   const isCancelled = status === 'cancelled';
 
   const setShiftIdToCopy = (id: number): void => {
-    dispatch(shiftActions.setSelectedShiftIdToCopy(id));
+    dispatch(shiftActions.storeShiftInfoForCopyOrEdit({
+      id,
+      isEdit: false,
+    }));
+  }
+
+  const handleEditShift = (id: number): void => {
+    dispatch(shiftActions.storeShiftInfoForCopyOrEdit({
+      id,
+      isEdit: true
+    }));
   }
 
   const handleCancelShift = (id: number): void => {
     dispatch(shiftActions.cancelShiftAsync({id}));
-  }
-
-  const handleEditShift = (): void => {
-    console.log('edit');
   }
 
   return (
@@ -49,7 +56,7 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        transition: 'opacity 0.3s',
+        transition: 'opacity 0.5s',
         zIndex: 1,
       }}
     >
@@ -57,32 +64,31 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
         isCancelled ?
           <Typography variant='h5' color='error' fontWeight='bold'>CANCELLED</Typography>
             : <Stack direction="row" spacing={4}>
-            <IconButton
-              {...iconButtonStyles}
-              color="primary"
-              aria-label="copy"
-              onClick={() => setShiftIdToCopy(shiftId)}
-            >
-              <FileCopy fontSize='large' />
-            </IconButton>
-            <IconButton
-              {...iconButtonStyles}
-              color='primary'
-              aria-label="edit"
-              size='large'
-              onClick={handleEditShift}
-            >
-              <Edit fontSize='large' />
-            </IconButton>
-            <IconButton
-              {...iconButtonStyles}
-              color='error'
-              aria-label="delete"
-              size='large'
-              onClick={() => handleCancelShift(shiftId)}
-            >
-              <DeleteForever fontSize='large' />
-            </IconButton>
+            <IconButtonWithTooltip
+              iconBtnProps={{
+                ...iconButtonStyles,
+                onClick: () => setShiftIdToCopy(shiftId)
+              }}
+              tooltipText='Copy'
+              icon={FileCopy}
+            />
+            <IconButtonWithTooltip
+              iconBtnProps={{
+                ...iconButtonStyles,
+                onClick: () => handleEditShift(shiftId)
+              }}
+              tooltipText='Edit'
+              icon={Edit}
+            />
+            <IconButtonWithTooltip
+              iconBtnProps={{
+                color: 'error',
+                ...iconButtonStyles,
+                onClick: () => handleCancelShift(shiftId)
+              }}
+              tooltipText='Cancel'
+              icon={DeleteForever}
+            />
           </Stack>
       }
     </Box>

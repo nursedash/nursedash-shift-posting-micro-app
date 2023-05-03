@@ -18,7 +18,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import { NewShift } from '../../../shared/gql/shift/types';
 import { Controller, SetValueConfig, useForm } from 'react-hook-form';
 import useAppDispatch from '../../../shared/hooks/useAppDispatch';
-import { selectShiftFromPostedShifts, selectShiftIdToCopy, shiftActions } from '../../../shared/redux/shift/slice';
+import { selectShiftFromPostedOrEditedShifts, selectShiftInfoForCopyOrEdit, shiftActions } from '../../../shared/redux/shift/slice';
 import SelectRHF from '../../../shared/components/SelectRHF/SelectRHF';
 import dayjs from 'dayjs';
 
@@ -50,32 +50,38 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       isDirty
     }
   } = useForm<NewShift>();
+  const unitsAndTypes = useAppSelector(selectFacilityUnitsAndTypes);
+  const allowedQualifications = useAppSelector(selectFacilityQualifications);
+  const [types, setTypes] = useState<Type[]>([]);
+  const dispatch = useAppDispatch();
+  const shiftToCopyOrEdit = useAppSelector(selectShiftInfoForCopyOrEdit);
+  const { isEdit, id }: { isEdit: boolean, id: number }= shiftToCopyOrEdit;
+  const shiftData = useAppSelector(selectShiftFromPostedOrEditedShifts(id))?.shift;
+  const formTitle = isEdit ? 'Please modify your existing shift below' : 'Please enter the details of your new shift below.';
+  const submitBtnTxt = isEdit ? 'Submit Change' : 'Post Shift';
+
   const cleanDateTime = (propName: 'startDateTime' | 'endDateTime'): string =>
     typeof getValues(propName) === 'string' ? getValues(propName) as unknown as string : getValues(propName).toISOString();
 
 
   const handleFormReset = (): void => {
     reset();
-    dispatch(shiftActions.resetShiftIdToCopy());
+    dispatch(shiftActions.resetShiftInfoToCopyOrEdit());
   }
 
   const onSubmit = handleSubmit((data) => {
     const startDateTime = cleanDateTime('startDateTime');
     const endDateTime = cleanDateTime('endDateTime');
-    dispatch(shiftActions.postShiftDataAsync({
+    const variables = {
       ...data,
       startDateTime,
       endDateTime
-    }));
+    }
+
+    console.log(isEdit);
+    dispatch(isEdit ? shiftActions.updateShiftAsync({id: shiftToCopyOrEdit.id, ...variables}) : shiftActions.postShiftAsync(variables));
     handleFormReset()
   });
-
-  const unitsAndTypes = useAppSelector(selectFacilityUnitsAndTypes);
-  const allowedQualifications = useAppSelector(selectFacilityQualifications);
-  const shiftIdToCopy = useAppSelector(selectShiftIdToCopy);
-  const [types, setTypes] = useState<Type[]>([]);
-  const dispatch = useAppDispatch();
-  const shiftToCopy = useAppSelector(selectShiftFromPostedShifts(shiftIdToCopy));
 
   const handleUnitChange = (e: React.ChangeEvent<{ value: string }>): void => {
     resetField('type', { defaultValue: '' })
@@ -94,22 +100,22 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   }
 
   useEffect(() => {
-    if (shiftIdToCopy === 0 || shiftToCopy === undefined) return;
+    if (shiftToCopyOrEdit.id === 0 || shiftData === undefined) return;
     const setValueConfig: SetValueConfig = {
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true,
     };
 
-    setTypes(getTypes(shiftToCopy.unit));
-    setValue('unit', shiftToCopy.unit, setValueConfig);
-    setValue('type', shiftToCopy.type, setValueConfig);
-    setValue('startDateTime', dayjs(shiftToCopy.start_time), setValueConfig);
-    setValue('endDateTime', dayjs(shiftToCopy.end_time), setValueConfig);
-    setValue('qualifications', shiftToCopy.qualifications, setValueConfig);
-    setValue('breakDuration', shiftToCopy.breakTime, setValueConfig);
-    setValue('description', shiftToCopy.description, setValueConfig);
-  }, [shiftIdToCopy, errors, shiftToCopy, setValue]);
+    setTypes(getTypes(shiftData.unit));
+    setValue('unit', shiftData.unit, setValueConfig);
+    setValue('type', shiftData.type, setValueConfig);
+    setValue('startDateTime', dayjs(shiftData.start_time), setValueConfig);
+    setValue('endDateTime', dayjs(shiftData.end_time), setValueConfig);
+    setValue('qualifications', shiftData.qualifications, setValueConfig);
+    setValue('breakDuration', shiftData.breakTime, setValueConfig);
+    setValue('description', shiftData.description, setValueConfig);
+  }, [shiftToCopyOrEdit, errors, shiftData, setValue]);
 
   return (
     <form onSubmit={onSubmit}>
@@ -117,7 +123,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
         <Box
           p={2}
         >
-          <Typography color='grey' mb={3}>Please enter the details of your new shift below.</Typography>
+          <Typography color='grey' mb={3}>{formTitle}</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -234,7 +240,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       <CardActions>
         <Box p={2} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
           <Button disabled={!isDirty} onClick={handleFormReset}>Clear</Button>
-          <Button type='submit' variant="contained" disabled={!isValid}>Post Shift</Button>
+          <Button type='submit' variant="contained" disabled={!isValid}>{submitBtnTxt}</Button>
         </Box>
       </CardActions>
     </form>

@@ -1,5 +1,19 @@
 import { Dayjs } from 'dayjs';
 
+export enum ShiftStatus {
+  CANCELLED = 'cancelled',
+  CONFIRMED = 'confirmed',
+  PENDING_REVIEW = 'pending review',
+  OPENED = 'opened',
+  COMPLETED = 'completed',
+  PENDING_CLOCK = 'pending clock'
+}
+
+export enum ShiftSessionStatus {
+  NEW = 'New',
+  EDITED = 'Edited'
+}
+
 interface CreateOverviewShiftVariables {
   breakTime: number;
   description: string;
@@ -20,11 +34,20 @@ interface CancelOverviewShiftVariables {
 
 interface CancelOverviewShiftData {
   id: number;
-  status: string;
+  status: ShiftStatus;
 }
 
 interface CancelOverviewShiftResponse {
   cancelShift: CancelOverviewShiftData;
+}
+
+interface UpdateOverviewShiftResponse {
+  updateOverviewShift: Shift;
+}
+
+interface ShiftInfoForCopyOrEdit {
+  id: number;
+  isEdit: boolean;
 }
 
 interface Shift {
@@ -43,7 +66,7 @@ interface Shift {
   qualifications: string[];
   rate: number;
   role: string;
-  status: string;
+  status: ShiftStatus;
   type: string;
   unit: number;
   unitDescription: string;
@@ -61,12 +84,27 @@ interface NewShift {
   description: string;
 }
 
+ interface NewShiftPayload {
+  id?: number;
+  unit: number;
+  name: string;
+  type: string;
+  breakDuration: number;
+  startDateTime: string;
+  endDateTime: string;
+  qualifications: string[];
+  description: string;
+}
+
 export type {
   CreateOverviewShiftVariables,
   CreateOverviewShiftData,
   CancelOverviewShiftResponse,
   CancelOverviewShiftVariables,
   CancelOverviewShiftData,
+  UpdateOverviewShiftResponse,
   Shift,
-  NewShift
+  NewShift,
+  NewShiftPayload,
+  ShiftInfoForCopyOrEdit,
 };

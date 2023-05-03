@@ -1,12 +1,12 @@
 import React from 'react';
-import { Shift } from '../../../../shared/gql/shift/types';
+import { Shift, ShiftSessionStatus, ShiftStatus } from '../../../../shared/gql/shift/types';
 import {
   Card,
   CardContent,
   CardHeader,
   Typography,
   Box,
-  TypographyProps, Chip
+  TypographyProps
 } from '@mui/material';
 import { formatTimeRangeFromDateTimeStamps, getDateFromDateTimeStamp } from '../../../../shared/utils';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
@@ -15,9 +15,11 @@ import { selectFacilityTimezone } from '../../../../shared/redux/facility/slice'
 import formatToDollarAmount from '../../../../shared/utils/formatToDollarAmount';
 import PostedShiftCardOverlay from './PostedShiftCardOverlay';
 import uuid from 'react-uuid';
+import CustomMUIChip from '../../../../shared/components/CustomMUIChip/CustomMUIChip';
 
 interface PostedShiftCardProps {
   shift: Shift;
+  sessionStatus: ShiftSessionStatus;
 }
 
 const typographyProps: TypographyProps = {
@@ -33,8 +35,8 @@ const dataElement = (label: string, data: string, key: string): ReactJSXElement 
   )
 }
 
-const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift }) => {
-  const isCancelled = shift.status === 'cancelled'
+const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift, sessionStatus }) => {
+  const isCancelled = shift.status === ShiftStatus.CANCELLED;
   const tz = useAppSelector(selectFacilityTimezone)
   const shiftDisplayData = [
     {
@@ -67,15 +69,17 @@ const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift }) => {
     >
       <Card>
         <CardHeader
-          title={shift.role}
-          subheader={
-          <Box display='flex' alignItems='center'>
-            {
-              isCancelled ? <Chip label={shift.status.toUpperCase()} color={'error'} />
-                : <Typography>{getDateFromDateTimeStamp(shift.start_time)}</Typography>
-            }
-          </Box>
+          title={
+            <Box display='flex' alignItems='start' justifyContent='space-between'>
+              <Typography variant='h6'>{shift.role}</Typography>
+                <CustomMUIChip
+                  label={isCancelled ? ShiftStatus.CANCELLED.toUpperCase() : sessionStatus}
+                  color={isCancelled ? 'error' : sessionStatus === ShiftSessionStatus.NEW ? 'success' : 'info'}
+                />
+            </Box>
           }
+          sx={{ pb: 0 }}
+          subheader={<Typography>{getDateFromDateTimeStamp(shift.start_time)}</Typography>}
         />
         <CardContent>
           {shiftDisplayData.map((data) => dataElement(data.label, data.data.toString(), uuid()))}
