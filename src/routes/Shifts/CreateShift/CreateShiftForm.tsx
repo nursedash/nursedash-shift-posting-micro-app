@@ -14,13 +14,13 @@ import {
   selectFacilityQualifications,
   selectFacilityUnitsAndTypes, Type
 } from '../../../shared/redux/facility/slice';
-import { DateTimePicker } from '@mui/x-date-pickers';
 import { NewShift } from '../../../shared/gql/shift/types';
-import { Controller, SetValueConfig, useForm } from 'react-hook-form';
+import { SetValueConfig, useForm } from 'react-hook-form';
 import useAppDispatch from '../../../shared/hooks/useAppDispatch';
 import { selectShiftFromPostedOrEditedShifts, selectShiftInfoForCopyOrEdit, shiftActions } from '../../../shared/redux/shift/slice';
 import SelectRHF from '../../../shared/components/SelectRHF/SelectRHF';
 import dayjs from 'dayjs';
+import DateTimePickerRHF from '../../../shared/components/DateTimePickerRHF/DateTimePickerRHF';
 
 interface BreakOption {
   id: number;
@@ -59,6 +59,8 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const shiftData = useAppSelector(selectShiftFromPostedOrEditedShifts(id))?.shift;
   const formTitle = isEdit ? 'Please modify your existing shift below' : 'Please enter the details of your new shift below.';
   const submitBtnTxt = isEdit ? 'Submit Change' : 'Post Shift';
+  const defaultStartDateTime = dayjs(Date.now()).add(4, 'hour').startOf('hour');
+  const defaultEndDateTime = defaultStartDateTime.add(6, 'hour')
 
   const cleanDateTime = (propName: 'startDateTime' | 'endDateTime'): string =>
     typeof getValues(propName) === 'string' ? getValues(propName) as unknown as string : getValues(propName).toISOString();
@@ -166,35 +168,33 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
                 return { label: t.type, value: t.type }
               })}
             />
-            <Controller
-              name='startDateTime'
-              control={control}
-              rules={{
-                required: true
+            <DateTimePickerRHF
+              error={errors.startDateTime?.message}
+              controllerProps={{
+                name: 'startDateTime',
+                control,
+                rules: {
+                  required: true
+                },
+                defaultValue: defaultStartDateTime
               }}
-              render={({ field: {ref, value, ...field} }) => (
-                <DateTimePicker
-                  label='Start Date/Time'
-                  value={value ?? null}
-                  onChange={(date) => field.onChange(date?.toISOString())}
-                  inputRef={ref}
-                />
-              )}
+              dateTimePickerProps={{
+                label: 'Start Date/Time',
+              }}
             />
-            <Controller
-              name='endDateTime'
-              control={control}
-              rules={{
-                required: true,
+            <DateTimePickerRHF
+              error={errors.endDateTime?.message}
+              controllerProps={{
+                name: 'endDateTime',
+                control,
+                rules: {
+                  required: true
+                },
+                defaultValue: defaultEndDateTime
               }}
-              render={({ field: {ref, value, ...field} }) => (
-                <DateTimePicker
-                  label='End Date/Time'
-                  value={value ?? null}
-                  onChange={(date) => field.onChange(date?.toISOString())}
-                  inputRef={ref}
-                />
-              )}
+              dateTimePickerProps={{
+                label: 'End Date/Time',
+              }}
             />
             <TextField
               label='Shift Description'

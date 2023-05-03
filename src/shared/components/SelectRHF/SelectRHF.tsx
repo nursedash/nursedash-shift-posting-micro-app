@@ -5,7 +5,7 @@ import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/
 import uuid from 'react-uuid';
 
 interface SelectRHFProps<T extends FieldValues> {
-  controllerProps: Partial<ControllerProps<T>> & Required<Pick<ControllerProps<T>, 'name'>>;
+  controllerProps: Partial<ControllerProps<T>> & Required<Pick<ControllerProps<T>, 'name' | 'control'>>;
   inputLabel: string;
   selectOptions: Array<{
     value: string | number;
