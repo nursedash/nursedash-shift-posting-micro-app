@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, IconButtonProps, Stack, Typography } from '@mui/material';
 import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 import useAppDispatch from '../../../../shared/hooks/useAppDispatch';
 import { shiftActions } from '../../../../shared/redux/shift/slice';
 import IconButtonWithTooltip from '../../../../shared/components/IconButtonWithTooltip/IconButtonWithTooltip';
+import CancelShiftDialog from './CancelShiftDialog';
 
 interface PostedShiftCardOverlayProps {
   shiftId: number;
@@ -23,6 +24,7 @@ const iconButtonStyles: IconButtonProps = {
 const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId, status }) => {
   const dispatch = useAppDispatch();
   const isCancelled = status === 'cancelled';
+  const [isOpenCancelShiftDialog, setIsOpenCancelShiftDialog] = useState<boolean>(false);
 
   const setShiftIdToCopy = (id: number): void => {
     dispatch(shiftActions.storeShiftInfoForCopyOrEdit({
@@ -84,13 +86,18 @@ const PostedShiftCardOverlay: React.FC<PostedShiftCardOverlayProps> = ({ shiftId
               iconBtnProps={{
                 color: 'error',
                 ...iconButtonStyles,
-                onClick: () => handleCancelShift(shiftId)
+                onClick: () => setIsOpenCancelShiftDialog(true)
               }}
               tooltipText='Cancel'
               icon={DeleteForever}
             />
           </Stack>
       }
+      <CancelShiftDialog
+        isOpen={isOpenCancelShiftDialog}
+        setIsOpen={setIsOpenCancelShiftDialog}
+        confirmAction={() => handleCancelShift(shiftId)}
+      />
     </Box>
   );
 };
