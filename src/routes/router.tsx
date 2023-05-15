@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: 'redirect/:redirect/token/:token/facility/:facility',
+        path: 'redirect/:redirect/token/:token/facility/:facility/role/:role',
         element: <Redirect />,
       }
     ]

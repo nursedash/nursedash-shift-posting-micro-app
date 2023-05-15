@@ -91,7 +91,6 @@ interface Shift {
 
 interface NewShift {
   unit: number;
-  name: string;
   type: string;
   breakDuration: number;
   startDateTime: Dayjs;
@@ -103,7 +102,6 @@ interface NewShift {
  interface NewShiftPayload {
   id?: number;
   unit: number;
-  name: string;
   type: string;
   breakDuration: number;
   startDateTime: string;

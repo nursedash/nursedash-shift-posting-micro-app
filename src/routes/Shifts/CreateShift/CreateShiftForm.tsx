@@ -21,6 +21,7 @@ import { selectShiftFromPostedOrEditedShifts, selectShiftInfoForCopyOrEdit, shif
 import SelectRHF from '../../../shared/components/SelectRHF/SelectRHF';
 import dayjs from 'dayjs';
 import DateTimePickerRHF from '../../../shared/components/DateTimePickerRHF/DateTimePickerRHF';
+import uuid from 'react-uuid';
 
 interface BreakOption {
   id: number;
@@ -61,6 +62,11 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const submitBtnTxt = isEdit ? 'Submit Change' : 'Post Shift';
   const defaultStartDateTime = dayjs(Date.now()).add(4, 'hour').startOf('hour');
   const defaultEndDateTime = defaultStartDateTime.add(6, 'hour')
+  const setValueConfig: SetValueConfig = {
+    shouldValidate: true,
+    shouldDirty: true,
+    shouldTouch: true,
+  };
 
   const cleanDateTime = (propName: 'startDateTime' | 'endDateTime'): string =>
     typeof getValues(propName) === 'string' ? getValues(propName) as unknown as string : getValues(propName).toISOString();
@@ -80,7 +86,6 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       endDateTime
     }
 
-    console.log(isEdit);
     dispatch(isEdit ? shiftActions.updateShiftAsync({id: shiftToCopyOrEdit.id, ...variables}) : shiftActions.postShiftAsync(variables));
     handleFormReset()
   });
@@ -97,17 +102,15 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
 
   const handleTypeChange = (e: React.ChangeEvent<{ value: string }>): void => {
     const type = e.target.value ?? '';
-    const qualifications = types.find(t => t.type === type)?.defaultShiftQualifications;
-    if (qualifications != null && qualifications.length > 0) setValue('qualifications', qualifications);
+    const defaultSettings = types.find(t => t.type === type);
+    const qualifications = defaultSettings?.defaultShiftQualifications;
+    const description = defaultSettings?.defaultShiftDescription;
+    if (qualifications != null && qualifications.length > 0) setValue('qualifications', qualifications, { shouldValidate: true });
+    if (description != null && description !== '') setValue('description', description, { shouldValidate: true });
   }
 
   useEffect(() => {
     if (shiftToCopyOrEdit.id === 0 || shiftData === undefined) return;
-    const setValueConfig: SetValueConfig = {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    };
 
     setTypes(getTypes(shiftData.unit));
     setValue('unit', shiftData.unit, setValueConfig);
@@ -117,7 +120,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     setValue('qualifications', shiftData.qualifications, setValueConfig);
     setValue('breakDuration', shiftData.breakTime, setValueConfig);
     setValue('description', shiftData.description, setValueConfig);
-  }, [shiftToCopyOrEdit, errors, shiftData, setValue]);
+  }, [shiftToCopyOrEdit]);
 
   return (
     <form onSubmit={onSubmit}>
@@ -197,10 +200,12 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
               }}
             />
             <TextField
+              // The key is a hack to stop the label from overlapping the potential setValue operation
+              key={uuid()}
               label='Shift Description'
-              multiline
+              multiline={true}
               rows={4}
-              defaultValue={types.find(t => t.type === getValues('type'))?.defaultShiftDescription ?? ''}
+              defaultValue={''}
               helperText='Provide any specialty requirements, desired expertise or instructions, if any.'
               {...register('description', { required: true })}
             />

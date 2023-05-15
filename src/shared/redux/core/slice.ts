@@ -3,6 +3,7 @@ import { RootState } from '../store';
 export interface CoreData {
   token: string;
   facilityId: number | null;
+  role: string;
 }
 
 export interface CoreSlice extends CoreData { }
@@ -10,7 +11,8 @@ export interface CoreSlice extends CoreData { }
 
 const initialState: CoreSlice = {
     token: '',
-    facilityId: null
+    facilityId: null,
+    role: 'facility'
 };
 
 export const coreSlice = createSlice({
@@ -20,6 +22,7 @@ export const coreSlice = createSlice({
     storeCoreData: (state, action: PayloadAction<CoreData>) => {
       state.token = action.payload.token;
       state.facilityId = action.payload.facilityId;
+      state.role = action.payload.role;
     },
     storeCoreDataAsync: (state, action: PayloadAction<CoreData>) => {}
   },
