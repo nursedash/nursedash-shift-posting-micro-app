@@ -16,10 +16,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { token, facility, role} = useParams();
+  const { token, facility} = useParams();
   const facilityId = parseInt(facility ?? '0');
 
-  dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityId ?? null, role: role ?? 'facility'}));
+  dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityId ?? null, role: 'facility'}));
   dispatch(facilityActions.fetchFacilityDataAsync());
 
   return (

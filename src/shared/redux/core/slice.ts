@@ -8,7 +8,6 @@ export interface CoreData {
 
 export interface CoreSlice extends CoreData { }
 
-
 const initialState: CoreSlice = {
     token: '',
     facilityId: null,

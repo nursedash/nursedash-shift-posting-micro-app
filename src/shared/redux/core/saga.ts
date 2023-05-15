@@ -1,6 +1,8 @@
 import { put, takeLatest, Effect, ForkEffect } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { coreActions, CoreData } from './slice';
+import jwtDecode from 'jwt-decode';
+import { NDAuthToken } from '../../types/ndAuthToken';
 
 export function* watchStoreCoreDataAsync(
   action: PayloadAction<CoreData>
@@ -20,8 +22,10 @@ export function* watchStoreCoreDataAsync(
       window.location.assign('https://facility-staging.nursedash.com/#/login');
     }
 
+    const token: NDAuthToken = jwtDecode(coreData.token);
+
     localStorage.setItem('token', coreData.token);
-    localStorage.setItem('role', coreData.role);
+    localStorage.setItem('role', token.role ?? coreData.role);
     localStorage.setItem('facilityId', coreData?.facilityId?.toString() ?? '');
 
     yield put(coreActions.storeCoreData(coreData));
