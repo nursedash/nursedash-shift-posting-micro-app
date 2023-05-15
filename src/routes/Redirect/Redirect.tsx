@@ -9,6 +9,8 @@ const Redirect = (): ReactJSXElement => {
   useEffect(() => {
     if (redirect === 'create') {
       navigate('/shifts/create');
+    } else if (redirect === 'copy') {
+      console.log('copy');
     }
   }, [redirect, navigate]);
 
