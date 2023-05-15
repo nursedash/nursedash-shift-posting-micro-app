@@ -82,7 +82,7 @@ const PostedShiftCard: React.FC<PostedShiftCardProps> = ({ shift, sessionStatus 
           subheader={<Typography>{getDateFromDateTimeStamp(shift.start_time)}</Typography>}
         />
         <CardContent>
-          {shiftDisplayData.map((data) => dataElement(data.label, data.data.toString(), uuid()))}
+          {shiftDisplayData.map((data) => dataElement(data.label, data.data?.toString(), uuid()))}
         </CardContent>
       </Card>
       <PostedShiftCardOverlay shiftId={shift.id} status={shift.status} />

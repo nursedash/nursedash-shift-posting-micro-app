@@ -129,13 +129,14 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
 
   useEffect(() => {
     if (shiftToCopyOrEdit.id === 0 || shiftData === undefined) return;
+    console.log(shiftData);
 
     setTypes(getTypes(shiftData.unit));
     setValue('unit', shiftData.unit, setValueConfig);
     setValue('type', shiftData.type, setValueConfig);
     setValue('startDateTime', dayjs(shiftData.start_time), setValueConfig);
     setValue('endDateTime', dayjs(shiftData.end_time), setValueConfig);
-    setValue('qualifications', shiftData.qualifications, setValueConfig);
+    setValue('qualifications', shiftData.qualifications ?? [], setValueConfig);
     setValue('breakDuration', shiftData.breakTime, setValueConfig);
     setValue('description', shiftData.description, setValueConfig);
   }, [shiftToCopyOrEdit]);
@@ -232,7 +233,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
                 rows={4}
                 defaultValue={''}
                 helperText='Provide any specialty requirements, desired expertise or instructions, if any.'
-                {...register('description', { required: true })}
+                {...register('description')}
               />
               <SelectRHF
                 controllerProps={{
@@ -250,7 +251,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
               <SelectRHF
                 controllerProps={{
                   name: 'breakDuration',
-                  defaultValue: '',
+                  defaultValue: 0,
                   control,
                 }}
                 inputLabel='Break Time'
