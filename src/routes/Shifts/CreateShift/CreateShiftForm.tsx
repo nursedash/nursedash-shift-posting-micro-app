@@ -22,6 +22,7 @@ import SelectRHF from '../../../shared/components/SelectRHF/SelectRHF';
 import dayjs from 'dayjs';
 import DateTimePickerRHF from '../../../shared/components/DateTimePickerRHF/DateTimePickerRHF';
 import uuid from 'react-uuid';
+import LongShiftDialog from './LongShiftDialog';
 
 interface BreakOption {
   id: number;
@@ -67,6 +68,8 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     shouldDirty: true,
     shouldTouch: true,
   };
+  const [openLongShiftDialog, setOpenLongShiftDialog] = useState<boolean>(false);
+  const [waiveLongShiftWarning, setWaiveLongShiftWarning] = useState<boolean>(false);
 
   const cleanDateTime = (propName: 'startDateTime' | 'endDateTime'): string =>
     typeof getValues(propName) === 'string' ? getValues(propName) as unknown as string : getValues(propName).toISOString();
@@ -77,9 +80,23 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     dispatch(shiftActions.resetShiftInfoToCopyOrEdit());
   }
 
+  const warnOfShiftLength = (startDateTime: string, endDateTime: string): boolean => {
+    const isLong = dayjs(endDateTime).diff(dayjs(startDateTime), 'hour') >= 13;
+    if (isLong && !waiveLongShiftWarning) {
+      setOpenLongShiftDialog(true);
+    }
+
+    return isLong;
+  }
+
   const onSubmit = handleSubmit((data) => {
+    console.log('onSubmit');
     const startDateTime = cleanDateTime('startDateTime');
     const endDateTime = cleanDateTime('endDateTime');
+    if (warnOfShiftLength(startDateTime, endDateTime) && !waiveLongShiftWarning) {
+      return;
+    }
+
     const variables = {
       ...data,
       startDateTime,
@@ -87,7 +104,8 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     }
 
     dispatch(isEdit ? shiftActions.updateShiftAsync({id: shiftToCopyOrEdit.id, ...variables}) : shiftActions.postShiftAsync(variables));
-    handleFormReset()
+    handleFormReset();
+    setWaiveLongShiftWarning(false);
   });
 
   const handleUnitChange = (e: React.ChangeEvent<{ value: string }>): void => {
@@ -122,133 +140,142 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     setValue('description', shiftData.description, setValueConfig);
   }, [shiftToCopyOrEdit]);
 
+  useEffect(() => {
+    if (waiveLongShiftWarning) onSubmit()
+      .then(() => {})
+      .catch((e) => console.log(e));
+  }, [waiveLongShiftWarning]);
+
   return (
-    <form onSubmit={onSubmit}>
-      <CardContent>
-        <Box
-          p={2}
-        >
-          <Typography color='grey' mb={3}>{formTitle}</Typography>
+    <>
+      <form onSubmit={onSubmit}>
+        <CardContent>
           <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              '& > *:not(:last-child)': {
-                marginBottom: '16px',
-              },
-            }}
+            p={2}
           >
-            { unitsAndTypes.length > 0 &&
+            <Typography color='grey' mb={3}>{formTitle}</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                '& > *:not(:last-child)': {
+                  marginBottom: '16px',
+                },
+              }}
+            >
+              { unitsAndTypes.length > 0 &&
+                <SelectRHF
+                  controllerProps={{
+                    name: 'unit',
+                    defaultValue: '',
+                    rules: {
+                      required: true,
+                      onChange: handleUnitChange
+                    },
+                    control,
+                  }}
+                  inputLabel='Unit'
+                  selectOptions={ unitsAndTypes.map((ut) => {
+                    return { label: ut.unitName, value: ut.unitId }
+                  })}
+                />
+              }
               <SelectRHF
                 controllerProps={{
-                  name: 'unit',
+                  name: 'type',
                   defaultValue: '',
                   rules: {
                     required: true,
-                    onChange: handleUnitChange
+                    onChange: handleTypeChange
                   },
                   control,
                 }}
-                inputLabel='Unit'
-                selectOptions={ unitsAndTypes.map((ut) => {
-                  return { label: ut.unitName, value: ut.unitId }
+                inputLabel='Type'
+                selectOptions={types.map((t) => {
+                  return { label: t.type, value: t.type }
                 })}
               />
-            }
-            <SelectRHF
-              controllerProps={{
-                name: 'type',
-                defaultValue: '',
-                rules: {
-                  required: true,
-                  onChange: handleTypeChange
-                },
-                control,
-              }}
-              inputLabel='Type'
-              selectOptions={types.map((t) => {
-                return { label: t.type, value: t.type }
-              })}
-            />
-            <DateTimePickerRHF
-              error={errors.startDateTime?.message}
-              controllerProps={{
-                name: 'startDateTime',
-                control,
-                rules: {
-                  required: true
-                },
-                defaultValue: defaultStartDateTime
-              }}
-              dateTimePickerProps={{
-                label: 'Start Date/Time',
-              }}
-            />
-            <DateTimePickerRHF
-              error={errors.endDateTime?.message}
-              controllerProps={{
-                name: 'endDateTime',
-                control,
-                rules: {
-                  required: true
-                },
-                defaultValue: defaultEndDateTime
-              }}
-              dateTimePickerProps={{
-                label: 'End Date/Time',
-              }}
-            />
-            <TextField
-              // The key is a hack to stop the label from overlapping the potential setValue operation
-              key={uuid()}
-              label='Shift Description'
-              multiline={true}
-              rows={4}
-              defaultValue={''}
-              helperText='Provide any specialty requirements, desired expertise or instructions, if any.'
-              {...register('description', { required: true })}
-            />
-            <SelectRHF
-              controllerProps={{
-                name: 'qualifications',
-                defaultValue: [],
-                control,
-              }}
-              inputLabel='Required Qualification(s)'
-              isMulti={true}
-              helperText='Select any qualifications required for this shift, if any.'
-              selectOptions={allowedQualifications.map((q) => (
-                { label: q, value: q }
-              ))}
-            />
-            <SelectRHF
-              controllerProps={{
-                name: 'breakDuration',
-                defaultValue: '',
-                control,
-              }}
-              inputLabel='Break Time'
-              selectOptions={breakOptions.map((b) => (
-                { label: b.name, value: b.id }
-              ))}
-            />
-            <Typography color='grey' fontSize={12}>
-              {`By posting this shift, you are agreeing to NurseDash's `}
-              <Link href={'https://nursedash.com/terms-conditions/'}>terms of service</Link>
-              {` and `}
-              <Link href={'https://nursedash.com/privacy-policy/'}>privacy policy</Link>
-            </Typography>
+              <DateTimePickerRHF
+                error={errors.startDateTime?.message}
+                controllerProps={{
+                  name: 'startDateTime',
+                  control,
+                  rules: {
+                    required: true
+                  },
+                  defaultValue: defaultStartDateTime
+                }}
+                dateTimePickerProps={{
+                  label: 'Start Date/Time',
+                }}
+              />
+              <DateTimePickerRHF
+                error={errors.endDateTime?.message}
+                controllerProps={{
+                  name: 'endDateTime',
+                  control,
+                  rules: {
+                    required: true
+                  },
+                  defaultValue: defaultEndDateTime
+                }}
+                dateTimePickerProps={{
+                  label: 'End Date/Time',
+                }}
+              />
+              <TextField
+                // The key is a hack to stop the label from overlapping the potential setValue operation
+                key={uuid()}
+                label='Shift Description'
+                multiline={true}
+                rows={4}
+                defaultValue={''}
+                helperText='Provide any specialty requirements, desired expertise or instructions, if any.'
+                {...register('description', { required: true })}
+              />
+              <SelectRHF
+                controllerProps={{
+                  name: 'qualifications',
+                  defaultValue: [],
+                  control,
+                }}
+                inputLabel='Required Qualification(s)'
+                isMulti={true}
+                helperText='Select any qualifications required for this shift, if any.'
+                selectOptions={allowedQualifications.map((q) => (
+                  { label: q, value: q }
+                ))}
+              />
+              <SelectRHF
+                controllerProps={{
+                  name: 'breakDuration',
+                  defaultValue: '',
+                  control,
+                }}
+                inputLabel='Break Time'
+                selectOptions={breakOptions.map((b) => (
+                  { label: b.name, value: b.id }
+                ))}
+              />
+              <Typography color='grey' fontSize={12}>
+                {`By posting this shift, you are agreeing to NurseDash's `}
+                <Link href={'https://nursedash.com/terms-conditions/'}>terms of service</Link>
+                {` and `}
+                <Link href={'https://nursedash.com/privacy-policy/'}>privacy policy</Link>
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      </CardContent>
-      <CardActions>
-        <Box p={2} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-          <Button disabled={!isDirty} onClick={handleFormReset}>Clear</Button>
-          <Button type='submit' variant="contained" disabled={!isValid}>{submitBtnTxt}</Button>
-        </Box>
-      </CardActions>
-    </form>
+        </CardContent>
+        <CardActions>
+          <Box p={2} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+            <Button disabled={!isDirty} onClick={handleFormReset}>Clear</Button>
+            <Button type='submit' variant="contained" disabled={!isValid}>{submitBtnTxt}</Button>
+          </Box>
+        </CardActions>
+      </form>
+      <LongShiftDialog isOpen={openLongShiftDialog} setIsOpen={setOpenLongShiftDialog} confirmAction={() => setWaiveLongShiftWarning(true)} />
+    </>
   );
 }
 
