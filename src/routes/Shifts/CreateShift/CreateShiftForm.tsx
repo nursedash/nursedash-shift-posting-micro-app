@@ -11,7 +11,8 @@ import {
 } from '@mui/material';
 import { useAppSelector } from '../../../shared/hooks';
 import {
-  selectFacilityQualifications, selectFacilityTimezone,
+  selectFacilityQualifications,
+  selectFacilityTimezone,
   selectFacilityUnitsAndTypes
 } from '../../../shared/redux/facility/slice';
 import { NewShift, ShiftInfoForCopyOrEdit } from '../../../shared/gql/shift/types';
@@ -27,6 +28,9 @@ import { Type } from '../../../shared/gql/facility/types';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
+dayjs.extend(utc)
+dayjs.extend(timezone);
+
 interface BreakOption {
   id: number;
   name: string;
@@ -39,9 +43,6 @@ const breakOptions: BreakOption[] = [
   { id: 45, name: '45 Minutes' },
   { id: 60, name: '1 Hour' },
 ];
-
-dayjs.extend(utc)
-dayjs.extend(timezone);
 
 const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const {
@@ -58,6 +59,8 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
       isDirty
     }
   } = useForm<NewShift>();
+  const facilityTz = useAppSelector(selectFacilityTimezone)
+  dayjs.tz.setDefault(facilityTz);
   const unitsAndTypes = useAppSelector(selectFacilityUnitsAndTypes);
   const allowedQualifications = useAppSelector(selectFacilityQualifications);
   const [types, setTypes] = useState<Type[]>([]);
@@ -67,17 +70,13 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const shiftData = useAppSelector(selectShiftFromPostedOrEditedShifts(id))?.shift;
   const formTitle = isEdit ? 'Please modify your existing shift below' : 'Please enter the details of your new shift below.';
   const submitBtnTxt = isEdit ? 'Submit Change' : 'Post Shift';
-  const defaultStartDateTime = dayjs(Date.now()).add(4, 'hour').startOf('hour');
+  const defaultStartDateTime = dayjs.tz(Date.now()).add(4, 'hour').startOf('hour');
   const defaultEndDateTime = defaultStartDateTime.add(6, 'hour')
   const setValueConfig: SetValueConfig = {
     shouldValidate: true,
     shouldDirty: true,
     shouldTouch: true,
   };
-
-  const facilityTimezone = useAppSelector(selectFacilityTimezone);
-  dayjs.tz.setDefault(facilityTimezone);
-
   const [openLongShiftDialog, setOpenLongShiftDialog] = useState<boolean>(false);
   const [waiveLongShiftWarning, setWaiveLongShiftWarning] = useState<boolean>(false);
 
