@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useAppSelector } from '../../../shared/hooks';
 import {
-  selectFacilityQualifications,
+  selectFacilityQualifications, selectFacilityTimezone,
   selectFacilityUnitsAndTypes
 } from '../../../shared/redux/facility/slice';
 import { NewShift, ShiftInfoForCopyOrEdit } from '../../../shared/gql/shift/types';
@@ -24,6 +24,8 @@ import DateTimePickerRHF from '../../../shared/components/DateTimePickerRHF/Date
 import uuid from 'react-uuid';
 import LongShiftDialog from './LongShiftDialog';
 import { Type } from '../../../shared/gql/facility/types';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 interface BreakOption {
   id: number;
@@ -37,6 +39,9 @@ const breakOptions: BreakOption[] = [
   { id: 45, name: '45 Minutes' },
   { id: 60, name: '1 Hour' },
 ];
+
+dayjs.extend(utc)
+dayjs.extend(timezone);
 
 const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const {
@@ -69,6 +74,10 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     shouldDirty: true,
     shouldTouch: true,
   };
+
+  const facilityTimezone = useAppSelector(selectFacilityTimezone);
+  dayjs.tz.setDefault(facilityTimezone);
+
   const [openLongShiftDialog, setOpenLongShiftDialog] = useState<boolean>(false);
   const [waiveLongShiftWarning, setWaiveLongShiftWarning] = useState<boolean>(false);
 
