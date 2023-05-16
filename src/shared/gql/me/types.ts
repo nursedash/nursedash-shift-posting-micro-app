@@ -1,4 +1,4 @@
-import { FacilityData } from '../../redux/facility/slice';
+import { FacilityData } from '../facility/types';
 
 interface GetMeFacilityData {
   Me: FacilityData,

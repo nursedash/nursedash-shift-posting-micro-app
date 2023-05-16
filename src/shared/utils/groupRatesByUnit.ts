@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { FacilityRate, FacilityUnitAndTypes, Unit } from '../redux/facility/slice';
+import { FacilityRate, FacilityUnitAndTypes, Unit } from '../gql/facility/types';
 
 const transformRates = (rates: FacilityRate[], allUnits: Unit[]): FacilityUnitAndTypes[] => {
   const groupedRates = R.groupBy((rate: FacilityRate) => rate.unit.toString(), rates);

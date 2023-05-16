@@ -20,7 +20,6 @@ const LongShiftDialog: React.FC<LongShiftDialogProps> = ({ isOpen, setIsOpen, co
   const onSubmit = (): void => {
     confirmAction();
     handleClose();
-    console.log('handle close')
   }
 
   return (

@@ -1,5 +1,5 @@
-import { Effect, ForkEffect, call, takeEvery, put } from 'redux-saga/effects';
-import { shiftActions } from './slice';
+import { Effect, ForkEffect, call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
+import { selectShiftFromPostedOrEditedShifts, shiftActions } from './slice';
 import { client } from '../../../core/providers/ApolloProvider';
 import { createOverviewShift, cancelOverviewShift, updateOverviewShift } from '../../gql/shift/mutations';
 import {
@@ -9,12 +9,12 @@ import {
   CreateOverviewShiftVariables,
   NewShiftPayload,
   UpdateOverviewShiftResponse,
-  GetAllCompletedShiftsResponse, GetAllCompletedShiftsVariables
+  GetAllCompletedShiftsResponse, GetAllCompletedShiftsVariables, GetOverviewShiftResponse, GetOverviewShiftVariables
 } from '../../gql/shift/types';
 import { ApolloQueryResult } from '@apollo/client';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from "react-toastify";
-import { getAllCompletedShifts } from '../../gql/shift/queries';
+import { getAllCompletedShifts, getOverviewShift } from '../../gql/shift/queries';
 
 const mapShiftFormVariables = (payload: NewShiftPayload): CreateOverviewShiftVariables => ({
   breakTime: payload.breakDuration,
@@ -83,12 +83,12 @@ export function* watchUpdateShiftAsync(action: PayloadAction<NewShiftPayload>): 
     yield put(shiftActions.resetShiftInfoToCopyOrEdit());
     toast.success(`Shift updated successfully`);
   } catch (error) {
-    toast.error(`There was an updating this shift. Please try again.`);
+    toast.error(`There was an error updating this shift. Please try again.`);
     console.log(error);
   }
 }
 
-export function* watchGetCompletedShifts(action: PayloadAction<GetAllCompletedShiftsVariables>): Generator<Effect, void> {
+export function* watchGetCompletedShiftsAsync(action: PayloadAction<GetAllCompletedShiftsVariables>): Generator<Effect, void> {
   try {
     const { payload } = action;
     console.log(payload);
@@ -102,7 +102,33 @@ export function* watchGetCompletedShifts(action: PayloadAction<GetAllCompletedSh
 
     yield put(shiftActions.storeCompletedShifts(response.data.allCompletedShifts));
   } catch (error) {
-    toast.error(`There was an error getting the shifts. Please reload and try again.`);
+    toast.error(`There was an error retrieving the shift data. Please reload and try again.`);
+    console.log(error);
+  }
+}
+
+export function* watchGetOverviewShiftForCopyAsync(action: PayloadAction<GetOverviewShiftVariables>): Generator<Effect, void> {
+  try {
+    const { id } = action.payload;
+    const shift = yield select(selectShiftFromPostedOrEditedShifts(id));
+
+    if (shift != null) {
+      return;
+    }
+
+    const variables = {
+      id
+    };
+    
+    // @ts-expect-error
+    const response: ApolloQueryResult<GetOverviewShiftResponse> = yield call(client.query, {
+      query: getOverviewShift(),
+      variables
+    });
+
+    yield put(shiftActions.storePostedShift(response.data.OverviewShift));
+  } catch (error) {
+    toast.error(`There was an error setting your copied shift data. Please go back to the shift and try again.`);
     console.log(error);
   }
 }
@@ -122,7 +148,11 @@ export function* watchShiftSagas(): Generator<ForkEffect, void> {
   );
   yield takeEvery(
     shiftActions.getCompletedShiftsAsync,
-    watchGetCompletedShifts
+    watchGetCompletedShiftsAsync
+  );
+  yield takeLatest(
+    shiftActions.getOverviewShiftForCopyAsync,
+    watchGetOverviewShiftForCopyAsync
   );
 }
 

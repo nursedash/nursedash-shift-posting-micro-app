@@ -5,13 +5,14 @@ import AppContainer from './shared/components/Navigation/AppContainer';
 import useAppDispatch from './shared/hooks/useAppDispatch';
 import { useParams } from 'react-router-dom';
 import { coreActions } from './shared/redux/core/slice';
-import { facilityActions } from './shared/redux/facility/slice';
+import { facilityActions, selectFacilityTimezone } from './shared/redux/facility/slice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import 'dayjs/locale/en';
 import theme from './theme';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAppSelector } from './shared/hooks';
 
 
 const App = (): JSX.Element => {
@@ -21,7 +22,8 @@ const App = (): JSX.Element => {
 
   dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityId ?? null, role: 'facility'}));
   dispatch(facilityActions.fetchFacilityDataAsync());
-
+  const facilityTimezone = useAppSelector(selectFacilityTimezone);
+console.log(facilityTimezone)
   return (
     <div className="app">
       <ToastContainer />

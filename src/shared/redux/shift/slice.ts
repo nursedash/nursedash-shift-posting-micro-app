@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import {
-  CancelOverviewShiftVariables,
+  CancelOverviewShiftVariables, GetOverviewShiftVariables,
   NewShiftPayload,
   Shift,
   ShiftInfoForCopyOrEdit,
@@ -56,9 +56,10 @@ export const shiftSlice = createSlice({
       state.shiftInfoForCopyOrEdit = initialState.shiftInfoForCopyOrEdit;
     },
     getCompletedShiftsAsync: (state, action: PayloadAction<any>) => {},
-    storeCompletedShifts: (state, action: PayloadAction<any>) => {
+    storeCompletedShifts: (state, action: PayloadAction<Shift[]>) => {
       state.allCompletedShifts = action.payload;
-    }
+    },
+    getOverviewShiftForCopyAsync: (state, action: PayloadAction<GetOverviewShiftVariables>) => {},
   },
 });
 

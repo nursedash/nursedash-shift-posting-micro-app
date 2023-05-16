@@ -9,4 +9,12 @@ const getAllCompletedShifts = (fields: string = shiftFields): DocumentNode => gq
  }
 `
 
-export { getAllCompletedShifts };
+const getOverviewShift = (fields: string = shiftFields): DocumentNode => gql`
+  query OverviewShift($id: Int!) {
+    OverviewShift(id: $id) {
+      ${fields}
+    }
+  }
+`
+
+export { getAllCompletedShifts, getOverviewShift };

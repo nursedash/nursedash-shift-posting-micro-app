@@ -61,6 +61,15 @@ interface GetAllCompletedShiftsVariables {
   sortOrder: string;
   filter: CompletedShiftFilter;
 }
+
+interface GetOverviewShiftResponse {
+  OverviewShift: Shift;
+}
+
+interface GetOverviewShiftVariables {
+  id: number;
+}
+
 interface ShiftInfoForCopyOrEdit {
   id: number;
   isEdit: boolean;
@@ -118,9 +127,11 @@ export type {
   CancelOverviewShiftData,
   GetAllCompletedShiftsResponse,
   GetAllCompletedShiftsVariables,
+  GetOverviewShiftResponse,
+  GetOverviewShiftVariables,
   UpdateOverviewShiftResponse,
   Shift,
   NewShift,
   NewShiftPayload,
-  ShiftInfoForCopyOrEdit,
+  ShiftInfoForCopyOrEdit
 };

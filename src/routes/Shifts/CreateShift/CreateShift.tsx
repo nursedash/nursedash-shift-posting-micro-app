@@ -7,11 +7,13 @@ import { useAppSelector } from '../../../shared/hooks';
 import { selectPostedOrEditedShifts, selectShiftInfoForCopyOrEdit } from '../../../shared/redux/shift/slice';
 import PostedShiftCard from '../components/PostedShiftCard/PostedShiftCard';
 import uuid from 'react-uuid';
+import { ShiftInfoForCopyOrEdit } from '../../../shared/gql/shift/types';
+
 
 const CreateShift: React.FC = (): ReactJSXElement => {
   const postedShifts = useAppSelector(selectPostedOrEditedShifts);
   const shiftToCopyOrEdit = useAppSelector(selectShiftInfoForCopyOrEdit);
-  const { isEdit }: { isEdit: boolean } = shiftToCopyOrEdit;
+  const { isEdit }: ShiftInfoForCopyOrEdit = shiftToCopyOrEdit;
   const pageTitle = isEdit ? 'Edit Shift' : 'Create Shift';
 
   return (

@@ -12,9 +12,9 @@ import {
 import { useAppSelector } from '../../../shared/hooks';
 import {
   selectFacilityQualifications,
-  selectFacilityUnitsAndTypes, Type
+  selectFacilityUnitsAndTypes
 } from '../../../shared/redux/facility/slice';
-import { NewShift } from '../../../shared/gql/shift/types';
+import { NewShift, ShiftInfoForCopyOrEdit } from '../../../shared/gql/shift/types';
 import { SetValueConfig, useForm } from 'react-hook-form';
 import useAppDispatch from '../../../shared/hooks/useAppDispatch';
 import { selectShiftFromPostedOrEditedShifts, selectShiftInfoForCopyOrEdit, shiftActions } from '../../../shared/redux/shift/slice';
@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import DateTimePickerRHF from '../../../shared/components/DateTimePickerRHF/DateTimePickerRHF';
 import uuid from 'react-uuid';
 import LongShiftDialog from './LongShiftDialog';
+import { Type } from '../../../shared/gql/facility/types';
 
 interface BreakOption {
   id: number;
@@ -57,7 +58,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   const [types, setTypes] = useState<Type[]>([]);
   const dispatch = useAppDispatch();
   const shiftToCopyOrEdit = useAppSelector(selectShiftInfoForCopyOrEdit);
-  const { isEdit, id }: { isEdit: boolean, id: number }= shiftToCopyOrEdit;
+  const { isEdit, id }: ShiftInfoForCopyOrEdit = shiftToCopyOrEdit;
   const shiftData = useAppSelector(selectShiftFromPostedOrEditedShifts(id))?.shift;
   const formTitle = isEdit ? 'Please modify your existing shift below' : 'Please enter the details of your new shift below.';
   const submitBtnTxt = isEdit ? 'Submit Change' : 'Post Shift';
@@ -90,7 +91,6 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   }
 
   const onSubmit = handleSubmit((data) => {
-    console.log('onSubmit');
     const startDateTime = cleanDateTime('startDateTime');
     const endDateTime = cleanDateTime('endDateTime');
     if (warnOfShiftLength(startDateTime, endDateTime) && !waiveLongShiftWarning) {
@@ -129,7 +129,6 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
 
   useEffect(() => {
     if (shiftToCopyOrEdit.id === 0 || shiftData === undefined) return;
-    console.log(shiftData);
 
     setTypes(getTypes(shiftData.unit));
     setValue('unit', shiftData.unit, setValueConfig);
@@ -139,7 +138,11 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     setValue('qualifications', shiftData.qualifications ?? [], setValueConfig);
     setValue('breakDuration', shiftData.breakTime, setValueConfig);
     setValue('description', shiftData.description, setValueConfig);
-  }, [shiftToCopyOrEdit]);
+  }, [shiftToCopyOrEdit, shiftData]);
+
+  useEffect(() => {
+    if (shiftData == null && shiftToCopyOrEdit?.id > 0) dispatch(shiftActions.getOverviewShiftForCopyAsync({ id }));
+  }, [shiftToCopyOrEdit, shiftData]);
 
   useEffect(() => {
     if (waiveLongShiftWarning) onSubmit()

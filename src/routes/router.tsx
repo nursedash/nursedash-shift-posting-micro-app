@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: 'redirect/:redirect/token/:token/facility/:facility/copy?/:unit?/:shiftType?/:startTime?/:endTime?/:description?/:breakTime?/:qualifications?',
+        path: 'redirect/:redirect/token/:token/facility/:facility/copy?/:shiftId?',
         element: <Redirect />,
       }
     ]
