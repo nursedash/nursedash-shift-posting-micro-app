@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer from './Drawer';
 import { Alert, AlertTitle, Box, Container, Toolbar, Typography } from '@mui/material';
 import { Outlet } from 'react-router-dom';
@@ -10,15 +10,19 @@ import { selectFacilityName, selectFacilityTimezone } from '../../redux/facility
 const AppContainer = (): JSX.Element => {
   const [open, setOpen] = React.useState(true);
   const cleanTimezoneForDisplay = (timezone: string): string => timezone.replace('_', ' ');
-  const facilityTimezone = cleanTimezoneForDisplay(useAppSelector(selectFacilityTimezone));
   const facilityName = useAppSelector(selectFacilityName)
+  const facilityTimezone = cleanTimezoneForDisplay(useAppSelector(selectFacilityTimezone));
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const timezonesNotEqual = facilityTimezone !== localTimezone;
-  const [showTzAlert, setShowTzAlert] = useState<boolean>(timezonesNotEqual);
+  const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
 
   const toggleDrawer = (): void => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    if (facilityTimezone !== localTimezone) setShowTzAlert(true);
+  }, [facilityTimezone, localTimezone]);
+
 
   return (
     <>
