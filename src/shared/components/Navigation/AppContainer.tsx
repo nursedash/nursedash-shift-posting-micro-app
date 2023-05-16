@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Drawer from './Drawer';
-import { Box, Container, Toolbar } from '@mui/material';
+import { Alert, AlertTitle, Box, Container, Toolbar, Typography } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Copyright from '../Copyright/Copyright';
 import AppBar from './AppBar';
+import { useAppSelector } from '../../hooks';
+import { selectFacilityName, selectFacilityTimezone } from '../../redux/facility/slice';
 
 const AppContainer = (): JSX.Element => {
   const [open, setOpen] = React.useState(true);
+  const cleanTimezoneForDisplay = (timezone: string): string => timezone.replace('_', ' ');
+  const facilityTimezone = cleanTimezoneForDisplay(useAppSelector(selectFacilityTimezone));
+  const facilityName = useAppSelector(selectFacilityName)
+  const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const timezonesNotEqual = facilityTimezone !== localTimezone;
+  const [showTzAlert, setShowTzAlert] = useState<boolean>(timezonesNotEqual);
+
   const toggleDrawer = (): void => {
     setOpen(!open);
   };
@@ -29,6 +38,20 @@ const AppContainer = (): JSX.Element => {
       >
         <Toolbar />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          {
+            showTzAlert &&
+            <Box mb={3}>
+              <Alert onClose={() => setShowTzAlert(false)} severity='info'>
+                <AlertTitle>Timezone Difference Detected</AlertTitle>
+                <Typography style={{ display: 'inline'}}>
+                    {`Your local timezone is ${localTimezone} and ${facilityName}'s timezone is ${facilityTimezone}.`}
+                </Typography>
+                <Typography fontWeight='bold' style={{ display: 'inline'}}>
+                  {` All time in the portal is displayed in ${facilityName}'s timezone (${facilityTimezone}).`}
+                </Typography>
+              </Alert>
+            </Box>
+          }
           <Outlet />
           <Copyright sx={{ pt: 4 }} />
         </Container>
