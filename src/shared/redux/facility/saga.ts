@@ -1,6 +1,6 @@
 import { Effect, ForkEffect, select, call, takeLatest, put } from 'redux-saga/effects';
 import { facilityActions } from './slice';
-import { coreActions, selectCoreFacilityId } from '../core/slice';
+import { selectCoreFacilityId } from '../core/slice';
 import { client } from '../../../core/providers/ApolloProvider';
 import getMeFacility from '../../gql/me/queries';
 import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
@@ -23,11 +23,8 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
       allShiftUnits: response.data.allShiftUnits ,
       allQualificationTypes: response.data.allQualificationTypes
     }));
-
-    yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     console.log(error);
-    yield put(coreActions.setLoadingStatus(false));
     toast.error(`There was an error fetching the facility data. Please reload the page.`);
   }
 }

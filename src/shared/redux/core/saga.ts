@@ -13,8 +13,7 @@ export function* watchStoreCoreDataAsync(
     const lsCoreData: CoreData = {
       token: localStorage.getItem('token') ?? '',
       facilityId: parseInt(localStorage.getItem('facilityId') ?? '0'),
-      role: localStorage.getItem('role') ?? 'facility',
-      isLoading: true
+      role: localStorage.getItem('role') ?? 'facility'
     }
 
     const coreData = payload.token !== '' ? payload : lsCoreData;
