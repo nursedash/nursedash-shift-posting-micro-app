@@ -25,12 +25,13 @@ const App = (): JSX.Element => {
     <div className="app">
       <ToastContainer />
       <ThemeProvider theme={theme}>
-          <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
-              <AppContainer />
-            </LocalizationProvider>
-          </Box>
+        { isAppLoading === true && <Loader /> }
+        <Box sx={{ display: 'flex' }}>
+          <CssBaseline />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
+            <AppContainer />
+          </LocalizationProvider>
+        </Box>
       </ThemeProvider>
     </div>
   );
