@@ -15,7 +15,6 @@ import { ApolloQueryResult } from '@apollo/client';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from "react-toastify";
 import { getAllCompletedShifts, getOverviewShift } from '../../gql/shift/queries';
-import { coreActions } from '../core/slice';
 
 const mapShiftFormVariables = (payload: NewShiftPayload): CreateOverviewShiftVariables => ({
   breakTime: payload.breakDuration,
@@ -110,7 +109,6 @@ export function* watchGetCompletedShiftsAsync(action: PayloadAction<GetAllComple
 
 export function* watchGetOverviewShiftForCopyAsync(action: PayloadAction<GetOverviewShiftVariables>): Generator<Effect, void> {
   try {
-    yield put(coreActions.setLoadingStatus(true));
     const { id } = action.payload;
     const shift = yield select(selectShiftFromPostedOrEditedShifts(id));
 
@@ -129,9 +127,7 @@ export function* watchGetOverviewShiftForCopyAsync(action: PayloadAction<GetOver
     });
 
     yield put(shiftActions.storePostedShift({...response.data.OverviewShift, isHidden: action.payload.isHidden }));
-    yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
-    yield put(coreActions.setLoadingStatus(false));
     toast.error(`There was an error setting your copied shift data. Please go back to the shift and try again.`);
     console.log(error);
   }
