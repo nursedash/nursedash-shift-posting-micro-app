@@ -28,7 +28,7 @@ const App = (): JSX.Element => {
     <div className="app">
       <ToastContainer />
       <ThemeProvider theme={theme}>
-        { isAppLoading === false && <Loader /> }
+        { isAppLoading === true && <Loader /> }
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
