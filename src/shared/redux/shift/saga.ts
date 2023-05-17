@@ -126,7 +126,7 @@ export function* watchGetOverviewShiftForCopyAsync(action: PayloadAction<GetOver
       variables
     });
 
-    yield put(shiftActions.storePostedShift(response.data.OverviewShift));
+    yield put(shiftActions.storePostedShift({...response.data.OverviewShift, isHidden: action.payload.isHidden }));
   } catch (error) {
     toast.error(`There was an error setting your copied shift data. Please go back to the shift and try again.`);
     console.log(error);
