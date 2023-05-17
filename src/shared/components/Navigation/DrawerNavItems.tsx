@@ -8,7 +8,6 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
-// import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 interface NavItem {
   path: string;
@@ -17,7 +16,7 @@ interface NavItem {
   local?: boolean;
 }
 
-const nursedashUrl = 'https://facility-staging.nursedash.com/#/';
+const nursedashUrl = `${process.env.REACT_APP_NURSEDASH_LEGACY_URL ?? ''}/`;
 
 const navItems: NavItem[] = [
   {
