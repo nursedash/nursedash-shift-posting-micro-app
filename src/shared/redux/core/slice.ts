@@ -4,7 +4,6 @@ export interface CoreData {
   token: string;
   facilityId: number | null;
   role: string;
-  isLoading?: boolean
 }
 
 export interface CoreSlice extends CoreData { }
@@ -12,8 +11,7 @@ export interface CoreSlice extends CoreData { }
 const initialState: CoreSlice = {
     token: '',
     facilityId: null,
-    role: 'facility',
-    isLoading: true
+    role: 'facility'
 };
 
 export const coreSlice = createSlice({
@@ -25,15 +23,11 @@ export const coreSlice = createSlice({
       state.facilityId = action.payload.facilityId;
       state.role = action.payload.role;
     },
-    storeCoreDataAsync: (state, action: PayloadAction<CoreData>) => {},
-    setLoadingStatus: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    }
+    storeCoreDataAsync: (state, action: PayloadAction<CoreData>) => {}
   },
 });
 
 export const selectCoreFacilityId = (state: RootState): number | null => state.core.facilityId;
-export const selectLoadingStatus = (state: RootState): boolean | undefined => state.core.isLoading;
 
 export const {
     actions: coreActions,
