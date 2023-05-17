@@ -141,8 +141,8 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
     setTypes(getTypes(shiftData.unit));
     setValue('unit', shiftData.unit, setValueConfig);
     setValue('type', shiftData.type, setValueConfig);
-    setValue('startDateTime', dayjs.tz(shiftData.start_time), setValueConfig);
-    setValue('endDateTime', dayjs.tz(shiftData.end_time), setValueConfig);
+    setValue('startDateTime', dayjs.utc(shiftData.start_time).tz(), setValueConfig);
+    setValue('endDateTime', dayjs.utc(shiftData.end_time).tz(), setValueConfig);
     setValue('qualifications', shiftData.qualifications ?? [], setValueConfig);
     setValue('breakDuration', shiftData.breakTime, setValueConfig);
     setValue('description', shiftData.description, setValueConfig);
