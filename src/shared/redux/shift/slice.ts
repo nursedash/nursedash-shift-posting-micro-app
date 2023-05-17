@@ -5,11 +5,12 @@ import {
   NewShiftPayload,
   Shift,
   ShiftInfoForCopyOrEdit,
-  ShiftSessionStatus
+  ShiftSessionStatus,
+  ShiftWithVisibilityToggle
 } from '../../gql/shift/types';
 
 interface PostedOrEditedShift {
-  shift: Shift;
+  shift: ShiftWithVisibilityToggle;
   status: ShiftSessionStatus
 }
 
@@ -32,7 +33,7 @@ export const shiftSlice = createSlice({
   name: 'shift',
   initialState,
   reducers: {
-    storePostedShift: (state, action: PayloadAction<Shift>) => {
+    storePostedShift: (state, action: PayloadAction<ShiftWithVisibilityToggle>) => {
       state.postedOrEditedShifts = [...state.postedOrEditedShifts, { shift: action.payload, status: ShiftSessionStatus.NEW }];
     },
     postShiftAsync: (state, action: PayloadAction<NewShiftPayload>) => {},
@@ -64,7 +65,7 @@ export const shiftSlice = createSlice({
 });
 
 export const selectAllCompletedShifts = (state: RootState): Shift[] => state.shift.allCompletedShifts ?? [];
-export const selectPostedOrEditedShifts = (state: RootState): PostedOrEditedShift[] => state.shift.postedOrEditedShifts ?? [];
+export const selectPostedOrEditedShifts = (state: RootState): PostedOrEditedShift[] => state.shift.postedOrEditedShifts?.filter(s => s.shift.isHidden !== true) ?? [];
 export const selectShiftInfoForCopyOrEdit = (state: RootState): ShiftInfoForCopyOrEdit => state.shift.shiftInfoForCopyOrEdit;
 export const selectShiftFromPostedOrEditedShifts =
   (shiftId: number) => (state: RootState): PostedOrEditedShift | undefined =>

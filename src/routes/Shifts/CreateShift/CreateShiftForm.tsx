@@ -149,7 +149,7 @@ const CreateShiftForm: React.FC = (): ReactJSXElement => {
   }, [shiftToCopyOrEdit, shiftData]);
 
   useEffect(() => {
-    if (shiftData == null && shiftToCopyOrEdit?.id > 0) dispatch(shiftActions.getOverviewShiftForCopyAsync({ id }));
+    if (shiftData == null && shiftToCopyOrEdit?.id > 0) dispatch(shiftActions.getOverviewShiftForCopyAsync({ id, isHidden: true }));
   }, [shiftToCopyOrEdit, shiftData]);
 
   useEffect(() => {

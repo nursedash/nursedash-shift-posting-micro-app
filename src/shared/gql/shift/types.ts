@@ -68,6 +68,7 @@ interface GetOverviewShiftResponse {
 
 interface GetOverviewShiftVariables {
   id: number;
+  isHidden?: boolean;
 }
 
 interface ShiftInfoForCopyOrEdit {
@@ -98,6 +99,9 @@ interface Shift {
   updatedAt: string;
 }
 
+interface ShiftWithVisibilityToggle extends Shift {
+  isHidden?: boolean;
+}
 interface NewShift {
   unit: number;
   type: string;
@@ -133,5 +137,6 @@ export type {
   Shift,
   NewShift,
   NewShiftPayload,
-  ShiftInfoForCopyOrEdit
+  ShiftInfoForCopyOrEdit,
+  ShiftWithVisibilityToggle
 };
