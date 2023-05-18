@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import router from './routes/router';
 import { RouterProvider } from 'react-router-dom';
 import ApolloGqlProvider from './core/providers/ApolloProvider';
+import initSentry from './core/integrations/sentry';
 
 import './index.scss';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
+initSentry();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
