@@ -13,6 +13,7 @@
     "@mui/material": "^5.11.16",
     "@mui/x-date-pickers": "^6.2.1",
     "@reduxjs/toolkit": "^1.8.6",
+    "@sentry/react": "^7.52.1",
     "@types/ramda": "^0.29.0",
     "dayjs": "^1.11.7",
     "graphql": "^16.6.0",

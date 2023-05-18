@@ -17,9 +17,9 @@ export function* watchStoreCoreDataAsync(
     }
 
     const coreData = payload.token !== '' ? payload : lsCoreData;
-
+    const loginUrl = `${process.env.REACT_APP_NURSEDASH_LEGACY_URL ?? ''}/#/login`;
     if (coreData.token === '' || coreData.facilityId === 0) {
-      window.location.assign('https://facility-staging.nursedash.com/#/login');
+      window.location.assign(loginUrl);
     }
 
     const token: NDAuthToken = jwtDecode(coreData.token);

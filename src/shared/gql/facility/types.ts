@@ -34,8 +34,6 @@ export interface FacilityData {
   allQualificationTypes: Array<{ id: number; name: string }>;
 }
 
-export interface FacilitySlice extends FacilityData { }
-
 export interface FacilityUnitAndTypes {
   unitId: number;
   unitName: string;

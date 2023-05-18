@@ -1,10 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import transformRates from '../../utils/groupRatesByUnit';
-import { FacilityData, FacilitySlice, FacilityUnitAndTypes } from '../../gql/facility/types';
+import { FacilityData, FacilityUnitAndTypes } from '../../gql/facility/types';
 
-const initialState: Partial<FacilitySlice> = {
-    id: parseInt(localStorage.getItem('facilityId') ?? '0'),
+const initialState: FacilityData = {
+  id: 0,
+  name: '',
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  email: '',
+  allowedQualifications: [],
+  covidStatus: '',
+  rates: [],
+  covidVaccineRequired: false,
+  covidMedicalExemption: false,
+  covidReligiousExemption: false,
+  allShiftUnits: [],
+  allQualificationTypes: []
 };
 
 export const facilitySlice = createSlice({
@@ -27,6 +38,7 @@ export const facilitySlice = createSlice({
 });
 
 export const selectFacilityName = (state: RootState): string => state.facility.name ?? '';
+export const selectFacility = (state: RootState): FacilityData => state.facility;
 export const selectFacilityUnitsAndTypes = (state: RootState): FacilityUnitAndTypes[] => transformRates(state.facility.rates ?? [], state.facility.allShiftUnits ?? []) ?? [];
 export const selectFacilityQualifications = (state: RootState): string[] => state.facility.allowedQualifications ?? [];
 export const selectFacilityTimezone = (state: RootState): string => state.facility.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
