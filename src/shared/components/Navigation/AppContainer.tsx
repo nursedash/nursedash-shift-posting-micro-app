@@ -5,13 +5,17 @@ import { Outlet } from 'react-router-dom';
 import Copyright from '../Copyright/Copyright';
 import AppBar from './AppBar';
 import { useAppSelector } from '../../hooks';
-import { selectFacilityName, selectFacilityTimezone } from '../../redux/facility/slice';
+import { facilityActions, selectFacility } from '../../redux/facility/slice';
+import useAppDispatch from '../../hooks/useAppDispatch';
+import { selectCoreFacilityId } from '../../redux/core/slice';
 
 const AppContainer = (): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(true);
   const cleanTimezoneForDisplay = (timezone: string): string => timezone.replace('_', ' ');
-  const facilityName = useAppSelector(selectFacilityName)
-  const facilityTimezone = cleanTimezoneForDisplay(useAppSelector(selectFacilityTimezone));
+  const facilityId = useAppSelector(selectCoreFacilityId);
+  const { name: facilityName, timezone } = useAppSelector(selectFacility);
+  const facilityTimezone = cleanTimezoneForDisplay(timezone);
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
 
@@ -23,6 +27,9 @@ const AppContainer = (): JSX.Element => {
     if (facilityTimezone !== localTimezone) setShowTzAlert(true);
   }, [facilityTimezone, localTimezone]);
 
+  useEffect(() => {
+    dispatch(facilityActions.fetchFacilityDataAsync());
+  }, [facilityId]);
 
   return (
     <>
