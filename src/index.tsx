@@ -14,7 +14,9 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-initSentry();
+if (process.env.REACT_APP_ENVIRONMENT !== 'development' && process.env.REACT_APP_DISABLE_SENTRY !== 'true') {
+  initSentry();
+}
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
