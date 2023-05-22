@@ -6,7 +6,7 @@ import { FacilityData, FacilityUnitAndTypes } from '../../gql/facility/types';
 const initialState: FacilityData = {
   id: 0,
   name: '',
-  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  timezone: '',
   email: '',
   allowedQualifications: [],
   covidStatus: '',
