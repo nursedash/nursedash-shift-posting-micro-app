@@ -8,11 +8,13 @@ import { selectPostedOrEditedShifts, selectShiftInfoForCopyOrEdit } from '../../
 import PostedShiftCard from '../components/PostedShiftCard/PostedShiftCard';
 import uuid from 'react-uuid';
 import { ShiftInfoForCopyOrEdit } from '../../../shared/gql/shift/types';
+import { selectFacility } from '../../../shared/redux/facility/slice';
 
 
 const CreateShift: React.FC = (): ReactJSXElement => {
   const postedShifts = useAppSelector(selectPostedOrEditedShifts);
   const shiftToCopyOrEdit = useAppSelector(selectShiftInfoForCopyOrEdit);
+  const facility = useAppSelector(selectFacility);
   const { isEdit }: ShiftInfoForCopyOrEdit = shiftToCopyOrEdit;
   const pageTitle = isEdit ? 'Edit Shift' : 'Create Shift';
 
@@ -23,7 +25,10 @@ const CreateShift: React.FC = (): ReactJSXElement => {
           { pageTitle }
         </Typography>
         <Card>
-          <CreateShiftForm />
+          {
+            facility?.id > 0 &&
+            <CreateShiftForm />
+          }
         </Card>
       </Grid>
       <Grid item xs={5}>
