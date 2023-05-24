@@ -6,6 +6,7 @@ import getMeFacility from '../../gql/me/queries';
 import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
 import { toast } from "react-toastify";
+import * as Sentry from '@sentry/react';
 
 export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
   try {
@@ -24,6 +25,7 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
       allQualificationTypes: response.data.allQualificationTypes
     }));
 
+    Sentry.setUser({ email: response.data.Me.email});
     yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
