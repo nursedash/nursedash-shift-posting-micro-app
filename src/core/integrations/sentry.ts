@@ -7,9 +7,9 @@ const initSentry = (): void => {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,
     integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
-    tracesSampleRate: 1.0,
-    replaysSessionSampleRate: 1.0,
-    replaysOnErrorSampleRate: 1.0,
+    tracesSampleRate: .5,
+    replaysSessionSampleRate: .5,
+    replaysOnErrorSampleRate: .5,
     environment: process.env.REACT_APP_ENVIRONMENT,
   })
 }

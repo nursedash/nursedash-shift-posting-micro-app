@@ -3,6 +3,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { coreActions, CoreData } from './slice';
 import jwtDecode from 'jwt-decode';
 import { NDAuthToken } from '../../types/ndAuthToken';
+import logError from '../../utils/logError';
 
 export function* watchStoreCoreDataAsync(
   action: PayloadAction<CoreData>
@@ -30,7 +31,7 @@ export function* watchStoreCoreDataAsync(
 
     yield put(coreActions.storeCoreData(coreData));
   } catch (error) {
-    console.log(error);
+    logError(error);
   }
 }
 

@@ -7,6 +7,7 @@ import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
 import { toast } from "react-toastify";
 import * as Sentry from '@sentry/react';
+import logError from '../../utils/logError';
 
 export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
   try {
@@ -29,8 +30,8 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
     yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
-    console.log(error);
-    toast.error(`There was an error fetching the facility data. Please reload the page.`);
+    const msg = `There was an error fetching the facility data. Please reload the page.`;
+    logError(error, msg);
   }
 }
 

@@ -16,6 +16,8 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from "react-toastify";
 import { getAllCompletedShifts, getOverviewShift } from '../../gql/shift/queries';
 import { coreActions } from '../core/slice';
+import * as Sentry from '@sentry/react';
+import logError from '../../utils/logError';
 
 const mapShiftFormVariables = (payload: NewShiftPayload): CreateOverviewShiftVariables => ({
   breakTime: payload.breakDuration,
@@ -41,8 +43,8 @@ export function* watchPostShiftDataAsync(action: PayloadAction<NewShiftPayload>)
     yield put(shiftActions.storePostedShift(response.data.createOverviewShift));
     toast.success(`Shift created successfully`);
   } catch (error) {
-    toast.error(`There was an error creating the shift. Please try again.`);
-    console.log(error);
+    const msg = `There was an error creating the shift. Please try again.`
+    logError(error, msg);
   }
 }
 
@@ -61,8 +63,8 @@ export function* watchCancelShiftAsync(action: PayloadAction<CancelOverviewShift
     yield put(shiftActions.storeUpdatedShift(response.data.cancelShift));
     toast.success(`Shift cancelled successfully`);
   } catch (error) {
-    toast.error(`There was an error cancelling the shift. Please try again.`);
-    console.log(error);
+    const msg = `There was an error cancelling the shift. Please try again.`;
+    logError(error, msg);
   }
 }
 
@@ -84,8 +86,9 @@ export function* watchUpdateShiftAsync(action: PayloadAction<NewShiftPayload>): 
     yield put(shiftActions.resetShiftInfoToCopyOrEdit());
     toast.success(`Shift updated successfully`);
   } catch (error) {
-    toast.error(`There was an error updating this shift. Please try again.`);
-    console.log(error);
+    const msg = `There was an error updating this shift. Please try again.`;
+    logError(error, msg);
+
   }
 }
 
@@ -103,8 +106,8 @@ export function* watchGetCompletedShiftsAsync(action: PayloadAction<GetAllComple
 
     yield put(shiftActions.storeCompletedShifts(response.data.allCompletedShifts));
   } catch (error) {
-    toast.error(`There was an error retrieving the shift data. Please reload and try again.`);
-    console.log(error);
+    const msg = `There was an error retrieving the shift data. Please reload and try again.`;
+    logError(error, msg);
   }
 }
 
@@ -132,8 +135,8 @@ export function* watchGetOverviewShiftForCopyAsync(action: PayloadAction<GetOver
     yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
-    toast.error(`There was an error setting your copied shift data. Please go back to the shift and try again.`);
-    console.log(error);
+    const msg = `There was an error setting your copied shift data. Please go back to the shift and try again.`;
+    logError(error, msg);
   }
 }
 
