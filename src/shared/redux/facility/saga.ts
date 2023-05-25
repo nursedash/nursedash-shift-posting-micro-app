@@ -5,7 +5,8 @@ import { client } from '../../../core/providers/ApolloProvider';
 import getMeFacility from '../../gql/me/queries';
 import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
-import { toast } from "react-toastify";
+import * as Sentry from '@sentry/react';
+import logError from '../../utils/logError';
 
 export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
   try {
@@ -24,11 +25,12 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
       allQualificationTypes: response.data.allQualificationTypes
     }));
 
+    Sentry.setUser({ email: response.data.Me.email});
     yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
-    console.log(error);
-    toast.error(`There was an error fetching the facility data. Please reload the page.`);
+    const msg = `There was an error fetching the facility data. Please reload the page.`;
+    logError(error, msg);
   }
 }
 

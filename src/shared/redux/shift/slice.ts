@@ -34,7 +34,7 @@ export const shiftSlice = createSlice({
   initialState,
   reducers: {
     storePostedShift: (state, action: PayloadAction<ShiftWithVisibilityToggle>) => {
-      state.postedOrEditedShifts = [...state.postedOrEditedShifts, { shift: action.payload, status: ShiftSessionStatus.NEW }];
+      state.postedOrEditedShifts = [{ shift: action.payload, status: ShiftSessionStatus.NEW }, ...state.postedOrEditedShifts];
     },
     postShiftAsync: (state, action: PayloadAction<NewShiftPayload>) => {},
     cancelShiftAsync: (state, action: PayloadAction<CancelOverviewShiftVariables>) => {},
