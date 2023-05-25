@@ -5,7 +5,6 @@ import { client } from '../../../core/providers/ApolloProvider';
 import getMeFacility from '../../gql/me/queries';
 import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
-import { toast } from "react-toastify";
 import * as Sentry from '@sentry/react';
 import logError from '../../utils/logError';
 

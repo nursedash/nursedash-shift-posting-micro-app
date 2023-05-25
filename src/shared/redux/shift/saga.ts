@@ -16,7 +16,6 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from "react-toastify";
 import { getAllCompletedShifts, getOverviewShift } from '../../gql/shift/queries';
 import { coreActions } from '../core/slice';
-import * as Sentry from '@sentry/react';
 import logError from '../../utils/logError';
 
 const mapShiftFormVariables = (payload: NewShiftPayload): CreateOverviewShiftVariables => ({
