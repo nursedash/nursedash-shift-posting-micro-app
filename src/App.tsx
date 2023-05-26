@@ -16,14 +16,14 @@ import 'dayjs/locale/en';
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { token, facility} = useParams();
-  const facilityId = parseInt(facility ?? '0');
+  const { token, facility: facilityFromRoute} = useParams();
+  const facilityIdFromRoute = parseInt(facilityFromRoute != null && facilityFromRoute !== 'null' ? facilityFromRoute : '0');
   const isAppLoading = useAppSelector(selectLoadingStatus)
   const facilityIdFromStorage = useAppSelector(selectCoreFacilityId);
 
   useEffect(() => {
-    dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityId ?? null, role: 'facility'}));
-  }, [token, facilityId])
+    dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityIdFromRoute ?? facilityIdFromStorage ?? null, role: 'facility'}));
+  }, [token, facilityIdFromRoute])
 
   return (
     <div className="app">
@@ -34,7 +34,10 @@ const App = (): JSX.Element => {
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
             {
-              facilityIdFromStorage !== null && facilityIdFromStorage !== 0 && <AppContainer />
+              facilityIdFromStorage != null
+                && (facilityIdFromRoute > 0 && facilityIdFromStorage !== 0)
+                && facilityIdFromRoute === facilityIdFromStorage
+                && <AppContainer />
             }
           </LocalizationProvider>
         </Box>

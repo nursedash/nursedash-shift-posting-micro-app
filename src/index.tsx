@@ -18,8 +18,6 @@ if (process.env.REACT_APP_ENVIRONMENT !== 'development' && process.env.REACT_APP
   initSentry();
 }
 
-localStorage.clear();
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

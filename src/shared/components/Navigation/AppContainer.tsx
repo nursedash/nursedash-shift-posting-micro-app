@@ -7,14 +7,12 @@ import AppBar from './AppBar';
 import { useAppSelector } from '../../hooks';
 import { facilityActions, selectFacility } from '../../redux/facility/slice';
 import useAppDispatch from '../../hooks/useAppDispatch';
-import { selectCoreFacilityId } from '../../redux/core/slice';
 
 const AppContainer = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(true);
   const cleanTimezoneForDisplay = (timezone: string): string => timezone.replace('_', ' ');
-  const facilityId = useAppSelector(selectCoreFacilityId);
-  const { name: facilityName, timezone } = useAppSelector(selectFacility);
+  const { name: facilityName, timezone, id: facilityId } = useAppSelector(selectFacility);
   const facilityTimezone = cleanTimezoneForDisplay(timezone);
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
