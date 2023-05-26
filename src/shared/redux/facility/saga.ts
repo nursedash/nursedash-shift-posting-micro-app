@@ -14,19 +14,27 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
     const variables: GetMeVariables = { id: facilityId };
 
     // @ts-expect-error
-    const response: ApolloQueryResult<GetMeFacilityData> = yield call(client.query, {
+   yield call(client.query({
       query: getMeFacility(),
-      variables
-    });
+      variables,
+    }).then((response: ApolloQueryResult<GetMeFacilityData>): void => {
+      const data = response.data;
+      const me = data.Me;
 
-    yield put(facilityActions.storeFacilityData({
-      ...response.data.Me,
-      allShiftUnits: response.data.allShiftUnits ,
-      allQualificationTypes: response.data.allQualificationTypes
+      facilityActions.storeFacilityData({
+        ...me,
+        allShiftUnits: data.allShiftUnits ,
+        allQualificationTypes: data.allQualificationTypes
+      });
+
+      Sentry.setUser({
+        id: me?.id?.toString(),
+        email: me?.email
+      });
+
+      coreActions.setLoadingStatus(false);
     }));
 
-    Sentry.setUser({ email: response.data.Me.email});
-    yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
     const msg = `There was an error fetching the facility data. Please reload the page.`;
