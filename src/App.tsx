@@ -34,10 +34,7 @@ const App = (): JSX.Element => {
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en'>
             {
-              facilityIdFromStorage != null
-                && (facilityIdFromRoute > 0 && facilityIdFromStorage !== 0)
-                && facilityIdFromRoute === facilityIdFromStorage
-                && <AppContainer />
+              facilityIdFromStorage != null && <AppContainer />
             }
           </LocalizationProvider>
         </Box>
