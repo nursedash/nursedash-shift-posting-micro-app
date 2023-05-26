@@ -28,8 +28,8 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
       });
 
       Sentry.setUser({
-        id: me?.id?.toString(),
-        email: me?.email
+        id: me?.id?.toString() ?? '',
+        email: me?.email ?? ''
       });
 
       coreActions.setLoadingStatus(false);
