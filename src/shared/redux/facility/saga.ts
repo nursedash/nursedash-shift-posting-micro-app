@@ -25,7 +25,10 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
       allQualificationTypes: response.data.allQualificationTypes
     }));
 
-    Sentry.setUser({ email: response.data.Me.email});
+    Sentry.setUser({
+      id: response?.data?.Me?.id?.toString() ?? '',
+      email: response?.data?.Me?.email ?? ''
+    });
     yield put(coreActions.setLoadingStatus(false));
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
