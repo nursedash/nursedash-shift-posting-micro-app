@@ -11,7 +11,7 @@ import useAppDispatch from '../../hooks/useAppDispatch';
 const AppContainer = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(true);
-  const cleanTimezoneForDisplay = (timezone: string): string => timezone.replace('_', ' ');
+  const cleanTimezoneForDisplay = (timezone: string): string => timezone?.replace('_', ' ');
   const { name: facilityName, timezone, id: facilityId } = useAppSelector(selectFacility);
   const facilityTimezone = cleanTimezoneForDisplay(timezone);
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
