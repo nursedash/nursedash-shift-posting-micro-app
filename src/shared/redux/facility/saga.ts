@@ -1,4 +1,4 @@
-import { Effect, ForkEffect, select, call, takeLatest, put } from 'redux-saga/effects';
+import { Effect, ForkEffect, select, call, put, takeLatest } from 'redux-saga/effects';
 import { facilityActions } from './slice';
 import { coreActions, selectCoreFacilityId } from '../core/slice';
 import { client } from '../../../core/providers/ApolloProvider';
@@ -7,29 +7,40 @@ import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
 import * as Sentry from '@sentry/react';
 import logError from '../../utils/logError';
+import { PayloadAction } from '@reduxjs/toolkit';
 
-export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
+export function* watchStoreFacilityDataAsync(
+  action: PayloadAction<number | null>
+): Generator<Effect, void> {
   try {
-    const facilityId = (yield select(selectCoreFacilityId)) as number;
-    const variables: GetMeVariables = { id: facilityId };
+    const id = action.payload;
+    const facilityId = id != null ? id : (yield select(selectCoreFacilityId)) as number;
+    if (facilityId == null || facilityId === 0) {
+      const msg = 'No facility ID present in local storage.';
+      logError(new Error(msg));
+    } else {
+      const variables: GetMeVariables = { id: facilityId };
 
-    // @ts-expect-error
-    const response: ApolloQueryResult<GetMeFacilityData> = yield call(client.query, {
-      query: getMeFacility(),
-      variables
-    });
+      // @ts-expect-error
+      const response: ApolloQueryResult<GetMeFacilityData> = yield call(client.query, {
+        query: getMeFacility(),
+        variables,
+        fetchPolicy: 'no-cache'
+      });
 
-    yield put(facilityActions.storeFacilityData({
-      ...response.data.Me,
-      allShiftUnits: response.data.allShiftUnits ,
-      allQualificationTypes: response.data.allQualificationTypes
-    }));
+      yield put(facilityActions.storeFacilityData({
+        ...response.data.Me,
+        allShiftUnits: response.data.allShiftUnits,
+        allQualificationTypes: response.data.allQualificationTypes
+      }));
 
-    Sentry.setUser({
-      id: response?.data?.Me?.id?.toString() ?? '',
-      email: response?.data?.Me?.email ?? ''
-    });
-    yield put(coreActions.setLoadingStatus(false));
+      Sentry.setUser({
+        id: response?.data?.Me?.id?.toString() ?? '',
+        email: response?.data?.Me?.email ?? ''
+      });
+
+      yield put(coreActions.setLoadingStatus(false));
+    }
   } catch (error) {
     yield put(coreActions.setLoadingStatus(false));
     const msg = `There was an error fetching the facility data. Please reload the page.`;

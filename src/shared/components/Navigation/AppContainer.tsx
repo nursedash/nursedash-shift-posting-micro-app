@@ -1,33 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import Drawer from './Drawer';
 import { Alert, AlertTitle, Box, Container, Toolbar, Typography } from '@mui/material';
+// import { Outlet, useParams } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import Copyright from '../Copyright/Copyright';
 import AppBar from './AppBar';
 import { useAppSelector } from '../../hooks';
-import { facilityActions, selectFacility } from '../../redux/facility/slice';
+import { selectFacility } from '../../redux/facility/slice';
+import {
+  coreActions,
+  // selectCoreFacilityId,
+  selectLoadingStatus,
+  // selectTokenStorageStatus
+} from '../../redux/core/slice';
 import useAppDispatch from '../../hooks/useAppDispatch';
 
 const AppContainer = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(true);
   const cleanTimezoneForDisplay = (timezone: string): string => timezone?.replace('_', ' ');
-  const { name: facilityName, timezone, id: facilityId } = useAppSelector(selectFacility);
+  const { name: facilityName, timezone } = useAppSelector(selectFacility);
   const facilityTimezone = cleanTimezoneForDisplay(timezone);
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
+  // const facilityIdFromStorage = useAppSelector(selectCoreFacilityId);
+  const appLoading = useAppSelector(selectLoadingStatus);
+  const facility = useAppSelector(selectFacility);
+  // const tokenStoreageStatus = useAppSelector(selectTokenStorageStatus);
+  // const { redirect } = useParams();
 
   const toggleDrawer = (): void => {
     setOpen(!open);
   };
 
   useEffect(() => {
-    if (facilityTimezone !== localTimezone) setShowTzAlert(true);
-  }, [facilityTimezone, localTimezone]);
+    if (appLoading === false && facility.id === 0) dispatch(coreActions.redirectToLogin());
+  }, [appLoading, facility])
+
+  // useEffect(() => {
+  //   if (redirect !== 'create' && tokenStoreageStatus === false) {
+  //     dispatch(coreActions.storeCoreDataAsync({token: '', facilityId: null, role: 'facility'}));
+  //   }
+  // }, [facilityIdFromStorage, redirect])
 
   useEffect(() => {
-    dispatch(facilityActions.fetchFacilityDataAsync());
-  }, [facilityId]);
+    if (facilityTimezone !== localTimezone) setShowTzAlert(true);
+  }, [facilityTimezone, localTimezone]);
 
   return (
     <>

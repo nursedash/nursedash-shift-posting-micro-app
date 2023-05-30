@@ -33,7 +33,7 @@ export const facilitySlice = createSlice({
       state.allQualificationTypes = action.payload.allQualificationTypes;
       state.allShiftUnits = action.payload.allShiftUnits;
     },
-    fetchFacilityDataAsync: (state) => {}
+    fetchFacilityDataAsync: (state, action: PayloadAction<null | number>) => {}
   },
 });
 
