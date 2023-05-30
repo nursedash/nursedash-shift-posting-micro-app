@@ -28,6 +28,10 @@ export const coreSlice = createSlice({
     storeCoreDataAsync: (state, action: PayloadAction<CoreData>) => {},
     setLoadingStatus: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
+    },
+    redirectToLogin: () => {
+      const loginUrl = `${process.env.REACT_APP_NURSEDASH_LEGACY_URL ?? ''}/#/login`;
+      window.location.assign(loginUrl);
     }
   },
 });

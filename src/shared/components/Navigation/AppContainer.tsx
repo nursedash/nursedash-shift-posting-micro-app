@@ -5,17 +5,23 @@ import { Outlet } from 'react-router-dom';
 import Copyright from '../Copyright/Copyright';
 import AppBar from './AppBar';
 import { useAppSelector } from '../../hooks';
-import { facilityActions, selectFacility } from '../../redux/facility/slice';
+import { selectFacility } from '../../redux/facility/slice';
+import { coreActions, selectCoreFacilityId } from '../../redux/core/slice';
 import useAppDispatch from '../../hooks/useAppDispatch';
 
 const AppContainer = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(true);
   const cleanTimezoneForDisplay = (timezone: string): string => timezone?.replace('_', ' ');
-  const { name: facilityName, timezone, id: facilityId } = useAppSelector(selectFacility);
+  const { name: facilityName, timezone } = useAppSelector(selectFacility);
   const facilityTimezone = cleanTimezoneForDisplay(timezone);
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
+  const facilityIdFromStorage = useAppSelector(selectCoreFacilityId);
+
+  useEffect(() => {
+    dispatch(coreActions.storeCoreDataAsync({token: '', facilityId: null, role: 'facility'}));
+  }, [facilityIdFromStorage])
 
   const toggleDrawer = (): void => {
     setOpen(!open);
@@ -25,9 +31,11 @@ const AppContainer = (): JSX.Element => {
     if (facilityTimezone !== localTimezone) setShowTzAlert(true);
   }, [facilityTimezone, localTimezone]);
 
-  useEffect(() => {
-    dispatch(facilityActions.fetchFacilityDataAsync());
-  }, [facilityId]);
+  // useEffect(() => {
+  //   if (facilityIdFromStorage !== facilityId) {
+  //     dispatch(facilityActions.fetchFacilityDataAsync());
+  //   }
+  // }, [facilityIdFromStorage]);
 
   return (
     <>

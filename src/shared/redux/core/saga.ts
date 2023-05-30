@@ -4,6 +4,7 @@ import { coreActions, CoreData } from './slice';
 import jwtDecode from 'jwt-decode';
 import { NDAuthToken } from '../../types/ndAuthToken';
 import logError from '../../utils/logError';
+import { facilityActions } from '../facility/slice';
 
 export function* watchStoreCoreDataAsync(
   action: PayloadAction<CoreData>
@@ -18,18 +19,16 @@ export function* watchStoreCoreDataAsync(
     }
 
     const coreData = payload.token !== '' ? payload : lsCoreData;
-    const loginUrl = `${process.env.REACT_APP_NURSEDASH_LEGACY_URL ?? ''}/#/login`;
-    if (coreData.token === '' || coreData.facilityId === 0) {
-      window.location.assign(loginUrl);
-    }
-
-    const token: NDAuthToken = jwtDecode(coreData.token);
+    const token: NDAuthToken | null= coreData.token !== '' ? jwtDecode(coreData.token) : null;
 
     localStorage.setItem('token', coreData.token);
-    localStorage.setItem('role', token.role ?? coreData.role);
+    localStorage.setItem('role', token?.role ?? coreData.role);
     localStorage.setItem('facilityId', coreData?.facilityId?.toString() ?? '');
 
     yield put(coreActions.storeCoreData(coreData));
+    if (coreData.token !== '') {
+      yield put(facilityActions.fetchFacilityDataAsync())
+    }
   } catch (error) {
     logError(error);
   }
