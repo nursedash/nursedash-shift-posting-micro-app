@@ -32,7 +32,7 @@ const Redirect = (): ReactJSXElement => {
 
   useEffect(() => {
     dispatch(coreActions.storeCoreDataAsync({token: token ?? '', facilityId: facilityIdFromRoute ?? 0, role: 'facility'}));
-  }, [facilityIdFromRoute])
+  }, [])
 
   useEffect(() => {
     if (facilityIdFromAsync > 0) setLoaded(true);

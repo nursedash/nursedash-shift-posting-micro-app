@@ -1,4 +1,4 @@
-import { Effect, ForkEffect, select, call, takeLatest, put } from 'redux-saga/effects';
+import { Effect, ForkEffect, select, call, put, takeEvery } from 'redux-saga/effects';
 import { facilityActions } from './slice';
 import { coreActions, selectCoreFacilityId } from '../core/slice';
 import { client } from '../../../core/providers/ApolloProvider';
@@ -7,10 +7,14 @@ import { GetMeFacilityData, GetMeVariables } from '../../gql/me/types';
 import { ApolloQueryResult } from '@apollo/client';
 import * as Sentry from '@sentry/react';
 import logError from '../../utils/logError';
+import { PayloadAction } from '@reduxjs/toolkit';
 
-export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
+export function* watchStoreFacilityDataAsync(
+  action: PayloadAction<number | null>
+): Generator<Effect, void> {
   try {
-    const facilityId = (yield select(selectCoreFacilityId)) as number;
+    const id = action.payload;
+    const facilityId = id != null ? id : (yield select(selectCoreFacilityId)) as number;
     if (facilityId == null || facilityId === 0) {
       const msg = 'No facility ID present in local storage.';
       logError(new Error(msg));
@@ -44,7 +48,7 @@ export function* watchStoreFacilityDataAsync(): Generator<Effect, void> {
 }
 
 export function* watchFacilitySagas(): Generator<ForkEffect, void> {
-  yield takeLatest(
+  yield takeEvery(
     facilityActions.fetchFacilityDataAsync,
     watchStoreFacilityDataAsync
   );
