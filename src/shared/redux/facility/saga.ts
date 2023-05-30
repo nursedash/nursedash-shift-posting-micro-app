@@ -1,4 +1,4 @@
-import { Effect, ForkEffect, select, call, put, takeEvery } from 'redux-saga/effects';
+import { Effect, ForkEffect, select, call, put, takeLatest } from 'redux-saga/effects';
 import { facilityActions } from './slice';
 import { coreActions, selectCoreFacilityId } from '../core/slice';
 import { client } from '../../../core/providers/ApolloProvider';
@@ -24,7 +24,8 @@ export function* watchStoreFacilityDataAsync(
       // @ts-expect-error
       const response: ApolloQueryResult<GetMeFacilityData> = yield call(client.query, {
         query: getMeFacility(),
-        variables
+        variables,
+        fetchPolicy: 'no-cache'
       });
 
       yield put(facilityActions.storeFacilityData({
@@ -48,7 +49,7 @@ export function* watchStoreFacilityDataAsync(
 }
 
 export function* watchFacilitySagas(): Generator<ForkEffect, void> {
-  yield takeEvery(
+  yield takeLatest(
     facilityActions.fetchFacilityDataAsync,
     watchStoreFacilityDataAsync
   );

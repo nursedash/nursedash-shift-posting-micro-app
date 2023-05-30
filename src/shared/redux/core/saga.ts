@@ -1,4 +1,4 @@
-import { put, Effect, ForkEffect, select, takeEvery } from 'redux-saga/effects';
+import { put, Effect, ForkEffect, select, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { coreActions, CoreData, selectTokenStorageStatus } from './slice';
 import jwtDecode from 'jwt-decode';
@@ -38,7 +38,7 @@ export function* watchStoreCoreDataAsync(
 }
 
 export function* watchCoreSagas(): Generator<ForkEffect, void> {
-  yield takeEvery(
+  yield takeLatest(
     coreActions.storeCoreDataAsync,
     watchStoreCoreDataAsync
   );
