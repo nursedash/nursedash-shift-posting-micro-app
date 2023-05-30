@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Drawer from './Drawer';
 import { Alert, AlertTitle, Box, Container, Toolbar, Typography } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import Copyright from '../Copyright/Copyright';
 import AppBar from './AppBar';
 import { useAppSelector } from '../../hooks';
 import { selectFacility } from '../../redux/facility/slice';
-import { coreActions, selectCoreFacilityId } from '../../redux/core/slice';
+import { coreActions, selectCoreFacilityId, selectLoadingStatus } from '../../redux/core/slice';
 import useAppDispatch from '../../hooks/useAppDispatch';
 
 const AppContainer = (): JSX.Element => {
@@ -18,14 +18,24 @@ const AppContainer = (): JSX.Element => {
   const localTimezone = cleanTimezoneForDisplay(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showTzAlert, setShowTzAlert] = useState<boolean>(false);
   const facilityIdFromStorage = useAppSelector(selectCoreFacilityId);
-
-  useEffect(() => {
-    dispatch(coreActions.storeCoreDataAsync({token: '', facilityId: null, role: 'facility'}));
-  }, [facilityIdFromStorage])
+  const appLoading = useAppSelector(selectLoadingStatus);
+  const facility = useAppSelector(selectFacility);
+  const { redirect } = useParams();
 
   const toggleDrawer = (): void => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    if (appLoading === false && facility.id === 0) dispatch(coreActions.redirectToLogin());
+  }, [appLoading, facility])
+
+  useEffect(() => {
+    console.log(redirect);
+    if (redirect !== null) {
+      dispatch(coreActions.storeCoreDataAsync({token: '', facilityId: null, role: 'facility'}));
+    }
+  }, [facilityIdFromStorage, redirect])
 
   useEffect(() => {
     if (facilityTimezone !== localTimezone) setShowTzAlert(true);
