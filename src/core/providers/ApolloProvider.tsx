@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
-import {ApolloClient, DefaultOptions, InMemoryCache, ApolloProvider} from "@apollo/client";
+import {ApolloClient, DefaultOptions, InMemoryCache, ApolloProvider, ApolloLink, HttpLink} from "@apollo/client";
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { setContext } from '@apollo/client/link/context'
 
 const uri = process.env.REACT_APP_NURSEDASH_API_URL ?? '';
 const fetchPolicy = 'no-cache';
@@ -16,14 +17,28 @@ const defaultOptions: DefaultOptions = {
   },
 }
 
-const token= localStorage.getItem('token') ?? '';
-const client =  new ApolloClient<{}>({
+
+
+
+const getToken =():string=> {
+  const token = localStorage.getItem('token') ?? '';
+  return token !== '' ? `Bearer ${token}` : '';
+}
+
+const withToken = setContext(async () => {
+  const token = getToken();
+  return { headers: { Authorization: token } }
+})
+
+const link = ApolloLink.from([withToken, new HttpLink({
   uri,
+})]);
+
+
+const client =  new ApolloClient<{}>({
+  link,
   cache: new InMemoryCache(),
   defaultOptions,
-  headers: {
-    Authorization: token !== '' ? `Bearer ${token}` : '',
-  }
 });
 
 const ApolloGqlProvider = ({ children }: { children?: ReactNode }): ReactJSXElement => {
